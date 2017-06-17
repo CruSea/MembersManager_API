@@ -14,6 +14,7 @@ use MembersManager\Entities\User;
 
 interface ServieMethods
 {
+
     /**
      * User Table
      * @return mixed

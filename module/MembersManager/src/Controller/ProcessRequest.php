@@ -8,16 +8,9 @@
 
 namespace MembersManager\Controller;
 
-use Doctrine\ORM\EntityManager;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
 use MembersManager\Services\Service;
-use Zend\Form\Element\Email;
-use Zend\Mail\Message;
-use Zend\Mail\Transport\Sendmail;
-use Zend\View\Model\ViewModel;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\View;
 
 class Responses {
     const Invalid_Request_Format = 'Invalid Request Format';
@@ -53,6 +46,7 @@ abstract class AvailableServices extends BasicEnum {
     const FORGOT_PASSWORD = 'forgot_password';
 
     const ADD_USER = 'add_user';
+    const GET_ALL_USERS = 'get_all_users';
 
 }
 class FORMAT_REGISTER extends BasicEnum {
@@ -60,7 +54,6 @@ class FORMAT_REGISTER extends BasicEnum {
     const USER_PASS = 'user_pass';
     const USER_EMAIL = 'email';
     const FULL_NAME = 'full_name';
-    const COMPANY_NAME = 'company_name';
 }
 
 class FORMAT_ByItemID extends BasicEnum {
@@ -121,12 +114,13 @@ class ProcessRequest
     }
     private function getMainUser(){
         $newUser = new User();
+        $newUser->setId(1);
         $newUser->setUserPass($this->Request[RequestFormat::USER_PASS]);
         $newUser->setUserName($this->Request[RequestFormat::USER_NAME]);
         $newUser->setEmail($this->Request[RequestFormat::USER_NAME]);
         $foundUser = $this->ServiceManager->checkUser($newUser);
         if($foundUser){
-            if($foundUser && $foundUser->getPrivilege()->getId() == 1){
+            if($foundUser && $foundUser->getPrivilege()->getId() != 0){
                 return $foundUser;
             }else{
                 $this->Message[ResponsesType::ERROR] = Responses::Invalid_User_Account;
@@ -163,11 +157,18 @@ class ProcessRequest
                 /** Log in user */
                 $found = $this->getMainUser();
                 if ($found) {
-                    $this->Message[ResponsesType::RESPONSE] = $found->getArray();
+                    if($found->getisActive()){
+                        $this->Message[ResponsesType::RESPONSE] = $found->getArray();
+                    }else{
+                        $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
+                    }
                 }
             } elseif ($this->getRequestedService() == AvailableServices::REGISTER) {
                 /** Sign up new user */
                 if (FORMAT_REGISTER::isValidParam($this->getRequestParam())) {
+                    /**
+                     * @var User $superAdmin
+                     */
                     $superAdmin = $this->getSuperAdmin();
                     if($superAdmin){
                         $newUser = new User();
@@ -198,7 +199,9 @@ class ProcessRequest
                 } else {
                     $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
                 }
-            } else {
+            }elseif ($this->getRequestedService() == AvailableServices::REGISTER){
+
+            }else {
                 $this->Message[ResponsesType::ERROR] = Responses::Unknown_Service_Request;
             }
         }else{
@@ -229,39 +232,39 @@ class ProcessRequest
         return $randString;
     }
 
-    private function SendActivationEmail(ActivationEmail $activationEmail){
-        $mail = new \PHPMailer();
-        $mail ->IsSmtp();
-        $mail ->SMTPDebug = 0;
-        $mail ->SMTPAuth = true;
-        $mail ->SMTPSecure = 'ssl';
-        $mail ->Host = "23.236.62.147";
-        $mail ->Port = 465; // or 587
-        $mail ->IsHTML(true);
-        $mail ->Username = "george.beng@gmail.com";
-        $mail ->Password = "georgeben";
-        $mail ->SetFrom("george.beng@gmail.com");
-        $mail ->Subject = "Negarit SMS Solution";
-        $mail ->Body = $activationEmail->getActivationCode();
-        $mail ->AddAddress($activationEmail->getEmailAddress());
-        if($mail->send()){
-            return true;
-        }else{
-            return false;
-        }
-
-    }
-    private function ProcessMessage(Contact $contact, $message){
-        $newMessage = $message;
-        $str = $message;
-        $sample = "{NAME}";
-        $NamePos = strrpos($str,$sample);
-        if($NamePos){
-            if(substr($newMessage,$NamePos,strlen($sample)) == "{NAME}"){
-                $newMessage = substr($str,0,$NamePos).$contact->getFullName().substr($str,$NamePos+strlen($sample),strlen($str));
-            }
-        }
-        return $newMessage;
-    }
+//    private function SendActivationEmail(ActivationEmail $activationEmail){
+//        $mail = new \PHPMailer();
+//        $mail ->IsSmtp();
+//        $mail ->SMTPDebug = 0;
+//        $mail ->SMTPAuth = true;
+//        $mail ->SMTPSecure = 'ssl';
+//        $mail ->Host = "23.236.62.147";
+//        $mail ->Port = 465; // or 587
+//        $mail ->IsHTML(true);
+//        $mail ->Username = "george.beng@gmail.com";
+//        $mail ->Password = "georgeben";
+//        $mail ->SetFrom("george.beng@gmail.com");
+//        $mail ->Subject = "Negarit SMS Solution";
+//        $mail ->Body = $activationEmail->getActivationCode();
+//        $mail ->AddAddress($activationEmail->getEmailAddress());
+//        if($mail->send()){
+//            return true;
+//        }else{
+//            return false;
+//        }
+//
+//    }
+//    private function ProcessMessage(Contact $contact, $message){
+//        $newMessage = $message;
+//        $str = $message;
+//        $sample = "{NAME}";
+//        $NamePos = strrpos($str,$sample);
+//        if($NamePos){
+//            if(substr($newMessage,$NamePos,strlen($sample)) == "{NAME}"){
+//                $newMessage = substr($str,0,$NamePos).$contact->getFullName().substr($str,$NamePos+strlen($sample),strlen($str));
+//            }
+//        }
+//        return $newMessage;
+//    }
 
 }
