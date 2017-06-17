@@ -89,6 +89,19 @@ class Service implements ServieMethods
         return null;
     }
 
+    public function getAllUsers()
+    {
+        $foundUsers = [];
+        $allUsers = $this->EntityManager->getRepository(User::class)->findAll();
+        foreach ($allUsers as $_user){
+            /**
+             * @var User $_user
+             */
+            $foundUsers[] = $_user->getArray();
+        }
+        return $foundUsers;
+    }
+
     public function updateUser(User $user)
     {
         // TODO: Implement updateUser() method.
