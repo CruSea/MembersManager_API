@@ -97,14 +97,28 @@ class Service implements ServieMethods
             /**
              * @var User $_user
              */
-            $foundUsers[] = $_user->getArray();
+            if(!$_user->getisDeleted()){
+                $foundUsers[] = $_user->getArray();
+            }
         }
         return $foundUsers;
     }
 
     public function updateUser(User $user)
     {
-        // TODO: Implement updateUser() method.
+        try{
+            if($user->getId()){
+                $this->EntityManager->persist($user);
+                $this->EntityManager->flush();
+                if($user->getId()){
+                    return $user;
+                }
+            }
+            return null;
+        }catch (\Exception $exception){
+            print_r($exception);
+            return null;
+        }
     }
 
     public function removeUser(User $user)
@@ -146,7 +160,7 @@ class Service implements ServieMethods
             /**
              * @var Privilege $privilege
              */
-            if($privilege->getId()>2){
+            if($privilege->getId()>1){
                 $foundPrivileges[] = $privilege->getArray();
             }
         }
