@@ -20,7 +20,7 @@ $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/module/Me
 
 // database configuration parameters
 $conn = array(
-    'dbname' => 'NewNegarit',
+    'dbname' => 'MembersManagement',
     'user' => 'bengeos',
     'password' => 'passben',
     'host' => 'localhost:8889',
