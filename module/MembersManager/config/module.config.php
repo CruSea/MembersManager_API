@@ -13,7 +13,7 @@ return array(
             'negarit_api' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route' => '/negarit',
+                    'route' => '/api',
                     'defaults' => array(
                         'controller' => MainController::class,
                     ),
