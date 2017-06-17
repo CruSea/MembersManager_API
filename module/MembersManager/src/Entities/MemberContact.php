@@ -49,7 +49,7 @@ class memberContact
 
 
     /**
-     * @ORM\Column(name="mobilePhone", type="string", unique=true, nullable=false)
+     * @ORM\Column(name="POBOX", type="string", unique=true, nullable=false)
      */
     protected $POBOX;
 
