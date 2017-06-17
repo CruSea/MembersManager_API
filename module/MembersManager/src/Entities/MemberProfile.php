@@ -39,18 +39,7 @@ class MemberProfile extends BaseTable
      * @ORM\Column(name="sex", type="string", unique=true, nullable=false)
      */
     protected $sex;
-    /**
-     * @ORM\Column(name="jobType", type="string", unique=true, nullable=false)
-     */
-    protected $jobType;
-    /**
-     * @ORM\Column(name="educationLevel", type="string", unique=true, nullable=false)
-     */
-    protected $educationLevel;
-    /**
-     * @ORM\Column(name="qualification", type="string", unique=true, nullable=false)
-     */
-    protected $qualification;
+
 
 
     /**
@@ -133,45 +122,8 @@ class MemberProfile extends BaseTable
         $this->sex = $sex;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getJobType()
-    {
-        return $this->jobType;
-    }
 
-    /**
-     * @param mixed $jobType
-     */
-    public function setJobType($jobType)
-    {
-        $this->jobType = $jobType;
-    }
 
-    /**
-     * @return mixed
-     */
-    public function getEducationLevel()
-    {
-        return $this->educationLevel;
-    }
-
-    /**
-     * @param mixed $educationLevel
-     */
-    public function setEducationLevel($educationLevel)
-    {
-        $this->educationLevel = $educationLevel;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getQualification()
-    {
-        return $this->qualification;
-    }
 
     /**
      * @param mixed $qualification
@@ -188,9 +140,12 @@ class MemberProfile extends BaseTable
             'lastName'=>$this->getLastName(),
             'age'=>$this->getAge(),
             'sex'=>$this->getSex(),
-            'jobType'=>$this->getJobType(),
-            'qualification'=>$this->getJobType(),
-            'educationLevel'=>$this->getEducationLevel(),
+            'is_deleted'=>$this->getIsDeleted(),
+            'is_active'=>$this->getIsActive(),
+            'updated_by'=>$this->getUpdatedBy()->getFullName(),
+            'updated_date'=>$this->getUpdatedDate(),
+            'created_by'=>$this->getCreatedBy()->getFullName(),
+            'created_date'=>$this->getCreatedDate(),
         );
     }
 

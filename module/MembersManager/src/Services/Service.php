@@ -10,6 +10,7 @@ namespace MembersManager\Services;
 
 
 use Doctrine\ORM\EntityManager;
+use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
 
@@ -186,6 +187,82 @@ class Service implements ServieMethods
             }
         }
         return $foundPrivileges;
+    }
+
+    public function addMemberProfile(MemberProfile $memberProfile)
+    {
+        $memberProfile->setId(null);
+        $memberProfile->setIsActive(1);
+        $memberProfile->setIsDeleted(0);
+        $memberProfile->setCreatedDate(new \DateTime('now'));
+        $memberProfile->setUpdatedDate(new \DateTime('now'));
+        $this->EntityManager->persist($memberProfile);
+        $this->EntityManager->flush();
+        if($memberProfile->getId()){
+            return $memberProfile;
+        }else{
+            return null;
+        }
+    }
+
+    public function getMemberProfile(MemberProfile $memberProfile)
+    {
+        if($memberProfile->getId()){
+            $foundMemberProfile = $this->EntityManager->getRepository(MemberProfile::class)->find($memberProfile->getId());
+            return $foundMemberProfile;
+        }else{
+            return null;
+        }
+    }
+
+    public function getAllMemberProfile()
+    {
+        $foundMemberProfile = [];
+        $allMemberProfiles = $this->EntityManager->getRepository(MemberProfile::class)->findAll();
+        foreach ($allMemberProfiles as $memberProfile){
+            /**
+             * @var MemberProfile $memberProfile
+             */
+            if(!$memberProfile->getisDeleted()){
+                $foundMemberProfile[] = $memberProfile->getArray();
+            }
+        }
+        return $foundMemberProfile;
+    }
+
+    public function updateMemberProfile(MemberProfile $memberProfile)
+    {
+        try{
+            if($memberProfile->getId()){
+                $this->EntityManager->persist($memberProfile);
+                $this->EntityManager->flush();
+                if($memberProfile->getId()){
+                    return $memberProfile;
+                }
+            }
+            return null;
+        }catch (\Exception $exception){
+            print_r($exception);
+            return null;
+        }
+    }
+
+    public function removeMemberProfile(MemberProfile $memberProfile)
+    {
+        if($memberProfile){
+            /**
+             * @var User $foundUser
+             */
+            $foundMemberProfile = $this->getMemberProfile($memberProfile);
+            if($foundMemberProfile){
+                $this->EntityManager->remove($foundMemberProfile);
+                $this->EntityManager->flush();
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
     }
 
 

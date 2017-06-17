@@ -46,7 +46,9 @@ abstract class AvailableServices extends BasicEnum {
     const FORGOT_PASSWORD = 'forgot_password';
 
     const ADD_USER = 'add_user';
+    const ADD_MEMBER_PROFILE = 'add_member_profile';
     const GET_ALL_USERS = 'get_all_users';
+    const GET_ALL_MEMBER_CONTACTS = 'get_all_member_contacts';
     const GET_USER_PRIVILEGE = 'get_user_privilege';
     const REMOVE_USER = 'remove_user';
     const ACTIVATE_USER = 'activate_user';
@@ -60,6 +62,13 @@ class FORMAT_REGISTER extends BasicEnum {
     const FULL_NAME = 'full_name';
 }
 class FORMAT_USER_REGISTER extends BasicEnum {
+    const USER_NAME = 'user_name';
+    const USER_PASS = 'user_pass';
+    const USER_EMAIL = 'email';
+    const FULL_NAME = 'full_name';
+    const PRIVILEGE = 'privilege_id';
+}
+class FORMAT_MEMBER_REGISTER extends BasicEnum {
     const USER_NAME = 'user_name';
     const USER_PASS = 'user_pass';
     const USER_EMAIL = 'email';
@@ -246,6 +255,42 @@ class ProcessRequest
                 } else {
                     $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
                 }
+            } elseif ($this->getRequestedService() == AvailableServices::ADD_MEMBER_PROFILE) {
+                /** Add new user */
+                if (FORMAT_USER_REGISTER::isValidParam($this->getRequestParam())) {
+                    /**
+                     * @var User $superAdmin
+                     */
+                    $superAdmin = $this->getSuperAdmin();
+                    if ($superAdmin) {
+                        $newUser = new User();
+                        $newUser->setUserPass($this->getRequestParam()[FORMAT_USER_REGISTER::USER_PASS]);
+                        $newUser->setUserName($this->getRequestParam()[FORMAT_USER_REGISTER::USER_NAME]);
+                        $newUser->setFullName($this->getRequestParam()[FORMAT_USER_REGISTER::FULL_NAME]);
+                        $newUser->setEmail($this->getRequestParam()[FORMAT_USER_REGISTER::USER_EMAIL]);
+                        $newUser->setUpdatedBy($superAdmin);
+                        $newUser->setCreatedBy($superAdmin);
+                        $newPriv = new Privilege();
+                        $newPriv->setId($this->getRequestParam()[FORMAT_USER_REGISTER::PRIVILEGE]);
+                        // Get Privilege
+                        $privilege = $this->ServiceManager->getPrivilege($newPriv);
+                        if ($privilege) {
+                            $newUser->setPrivilege($privilege);
+                            $addedUser = $this->ServiceManager->addUser($newUser);
+                            if ($addedUser) {
+                                $this->Message[ResponsesType::RESPONSE] = $addedUser->getArray();
+                            } else {
+                                $this->Message[ResponsesType::ERROR] = "Failed to Register the user";
+                            }
+                        } else {
+                            $this->Message[ResponsesType::ERROR] = "Privilege not Found";
+                        }
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "The Super Admin could not be found now! please try again!!!";
+                    }
+                } else {
+                    $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
+                }
             } elseif ($this->getRequestedService() == AvailableServices::GET_ALL_USERS) {
                 /** Log in user */
                 $found = $this->getMainUser();
@@ -257,7 +302,18 @@ class ProcessRequest
                         $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
                     }
                 }
-            } elseif ($this->getRequestedService() == AvailableServices::GET_USER_PRIVILEGE) {
+            } elseif ($this->getRequestedService() == AvailableServices::GET_ALL_MEMBER_CONTACTS) {
+                /** Log in user */
+                $found = $this->getMainUser();
+                if ($found) {
+                    if ($found->getisActive() && $found->getPrivilege()->getId() < 5) {
+                        $foundUsers = $this->ServiceManager->getAllMemberProfile();
+                        $this->Message[ResponsesType::RESPONSE] = $foundUsers;
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
+                    }
+                }
+            }elseif ($this->getRequestedService() == AvailableServices::GET_USER_PRIVILEGE) {
                 /** Log in user */
                 $found = $this->getMainUser();
                 if ($found) {
