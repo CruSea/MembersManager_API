@@ -8,6 +8,7 @@
 
 namespace MembersManager\Controller;
 
+use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
 use MembersManager\Services\Service;
@@ -263,6 +264,8 @@ class ProcessRequest
                      */
                     $superAdmin = $this->getSuperAdmin();
                     if ($superAdmin) {
+                        $newMemberProfile = new MemberProfile();
+                        $newMemberProfile->set
                         $newUser = new User();
                         $newUser->setUserPass($this->getRequestParam()[FORMAT_USER_REGISTER::USER_PASS]);
                         $newUser->setUserName($this->getRequestParam()[FORMAT_USER_REGISTER::USER_NAME]);

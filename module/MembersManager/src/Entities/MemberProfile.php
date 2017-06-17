@@ -22,12 +22,16 @@ class MemberProfile extends BaseTable
     protected $id;
 
     /**
-     * @ORM\Column(name="firstName", type="string", unique=true, nullable=false)
+     * @ORM\Column(name="first_Name", type="string", unique=true, nullable=false)
      */
     protected $firstName;
+    /**
+     * @ORM\Column(name="middle_name", type="string", unique=true, nullable=false)
+     */
+    protected $middleName;
 
     /**
-     * @ORM\Column(name="lastName", type="string", unique=true, nullable=false)
+     * @ORM\Column(name="last_Name", type="string", unique=true, nullable=false)
      */
     protected $lastName;
 
