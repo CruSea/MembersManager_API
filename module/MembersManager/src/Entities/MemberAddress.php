@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="memberAddress")
  */
-class MemberAddress
+class MemberAddress extends BaseTable
 {
 
     /**
@@ -220,6 +220,12 @@ class MemberAddress
             'woreda'=>$this->getWoreda(),
             'keble'=>$this->getKebele(),
             'houseNumber'=>$this->getHouseNumber(),
+            'is_deleted'=>$this->getIsDeleted(),
+            'is_active'=>$this->getIsActive(),
+            'updated_by'=>$this->getUpdatedBy()->getFullName(),
+            'updated_date'=>$this->getUpdatedDate(),
+            'created_by'=>$this->getCreatedBy()->getFullName(),
+            'created_date'=>$this->getCreatedDate(),
         );
     }
 }
