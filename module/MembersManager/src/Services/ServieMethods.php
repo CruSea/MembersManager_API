@@ -23,6 +23,7 @@ interface ServieMethods
     public function getUser(User $user);
     public function getUserByEmail(User $user);
     public function getUserByID(User $user);
+    public function getAllUsers();
     public function checkUser(User $user);
     public function updateUser(User $user);
     public function removeUser(User $user);

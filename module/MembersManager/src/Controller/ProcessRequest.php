@@ -199,8 +199,17 @@ class ProcessRequest
                 } else {
                     $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
                 }
-            }elseif ($this->getRequestedService() == AvailableServices::REGISTER){
-
+            }elseif ($this->getRequestedService() == AvailableServices::GET_ALL_USERS){
+                /** Log in user */
+                $found = $this->getMainUser();
+                if ($found) {
+                    if($found->getisActive() && $found->getPrivilege()->getId() < 3){
+                        $foundUsers = $this->ServiceManager->getAllUsers();
+                        $this->Message[ResponsesType::RESPONSE] = $foundUsers;
+                    }else{
+                        $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
+                    }
+                }
             }else {
                 $this->Message[ResponsesType::ERROR] = Responses::Unknown_Service_Request;
             }
