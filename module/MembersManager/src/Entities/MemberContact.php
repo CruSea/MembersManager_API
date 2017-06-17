@@ -32,18 +32,18 @@ class memberContact
 
 
     /**
-     * @ORM\Column(name="officePhone", type="phone number", unique=true, nullable=false)
+     * @ORM\Column(name="officePhone", type="string", unique=true, nullable=false)
      */
     protected $officePhone;
 
     /**
-     * @ORM\Column(name="mobilePhone", type="phone number", unique=true, nullable=false)
+     * @ORM\Column(name="mobilePhone", type="string", unique=true, nullable=false)
      */
     protected $mobilePhone;
 
 
     /**
-     * @ORM\Column(name="homePhone", type="phone number", unique=true, nullable=false)
+     * @ORM\Column(name="homePhone", type="string", unique=true, nullable=false)
      */
     protected $homePhone;
 
