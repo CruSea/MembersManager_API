@@ -1,0 +1,34 @@
+//To download the ZF2 skeleton
+composer create-project -sdev zendframework/skeleton-application path/to/install
+// To run thr php index file
+php -S localhost:8989 -t public/ public/index.php
+// To add apigility dependencies to composer
+composer require "zfcampus/zf-apigility:~1.0"
+composer require --dev "zfcampus/zf-apigility-admin:~1.0"
+composer require --dev "zfcampus/zf-development-mode:~3.0"
+// To add Doctrine ORM on ZF2
+composer require "doctrine/doctrine-module"
+composer require "doctrine/doctrine-orm-module"
+// To add Zend Developer Tools
+composer require "zendframework/zend-developer-tools"
+composer require "zendframework/zend-mail"
+//Composer to update its autoloading definitions
+composer dump-autoload
+//Zend json Module
+composer require zendframework/zend-json
+
+
+
+./vendor/doctrine/doctrine-module/bin/doctrine-module orm:generate-entities ./module/Blog/src/ --generate-annotations=true
+
+./vendor/doctrine/doctrine-module/bin/doctrine-module orm:convert-mapping --namespace="Blog\\Entities\\" --force  --from-database annotation ./module/Blog/src/
+
+
+// Doctrine Bootstrap CLI commndas
+vendor/bin/doctrine orm:schema-tool:create
+vendor/bin/doctrine orm:schema-tool:drop --force
+vendor/bin/doctrine orm:schema-tool:update --force
+vendor/bin/doctrine :schema-tool:update --force
+vendor/bin/doctrine orm:schema-tool:update --force --dump-sql
+
+
