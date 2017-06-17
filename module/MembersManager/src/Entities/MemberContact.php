@@ -43,7 +43,7 @@ class memberContact
 
 
     /**
-     * @ORM\Column(name="mobilePhone", type="phone number", unique=true, nullable=false)
+     * @ORM\Column(name="homePhone", type="phone number", unique=true, nullable=false)
      */
     protected $homePhone;
 
