@@ -9,10 +9,22 @@
 namespace MembersManager\Services;
 
 
+use Doctrine\ORM\EntityManager;
+
 class Service
 {
     /**
-     * @var Entima
+     * @var EntityManager $EntityManage
      */
     protected $EntityManage;
+
+    /**
+     * Service constructor.
+     * @param EntityManager $EntityManage
+     */
+    public function __construct(EntityManager $EntityManage)
+    {
+        $this->EntityManage = $EntityManage;
+    }
+
 }

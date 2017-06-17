@@ -18,6 +18,6 @@ class Module implements ConfigProviderInterface
      */
     public function getConfig()
     {
-        // TODO: Implement getConfig() method.
+        return include __DIR__ . '/../config/module.config.php';
     }
 }
