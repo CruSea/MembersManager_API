@@ -11,6 +11,9 @@ namespace MembersManager\Services;
 
 use Doctrine\ORM\EntityManager;
 use MembersManager\Entities\MemberProfile;
+use MembersManager\Entities\MemberAddress;
+use MembersManager\Entities\MemberContact;
+use MembersManager\Entities\MembersPlege;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
 
@@ -266,4 +269,229 @@ class Service implements ServieMethods
     }
 
 
+
+    public function addMembersAddress(MemberAddress $membersAddress)
+    {
+        $membersAddress->setId(null);
+        $membersAddress->setIsActive(1);
+        $membersAddress->setIsDeleted(0);
+        $membersAddress->setCreatedDate(new \DateTime('now'));
+        $membersAddress->setUpdatedDate(new \DateTime('now'));
+        $this->EntityManager->persist($membersAddress);
+        $this->EntityManager->flush();
+        if($membersAddress->getId()){
+            return $membersAddress;
+        }else{
+            return null;
+        }
+    }
+
+    public function getAllMembersAddress()
+    {
+        $foundMemberAddress = [];
+        $allMemberAddress = $this->EntityManager->getRepository(MemberAddress::class)->findAll();
+        foreach ($allMemberAddress as $membersAddress){
+            /**
+             * @var MemberProfile $memberProfile
+             */
+            if(!$membersAddress->getisDeleted()){
+                $foundMemberAddress[] = $membersAddress->getArray();
+            }
+        }
+        return $foundMemberAddress;
+    }
+
+    public function getMembersAddress(MemberAddress $membersAddress)
+    {
+        if($membersAddress->getId()){
+            $foundMemberAddress = $this->EntityManager->getRepository(MemberProfile::class)->find($membersAddress->getId());
+            return $foundMemberAddress;
+        }else{
+            return null;
+        }
+    }
+
+    public function removeMembersAddress(MemberAddress $membersAddress)
+    {
+        if($membersAddress){
+            /**
+             * @var MemberAddress $foundMemberAddress
+             */
+            $foundMemberAddress = $this->getMemberProfile($membersAddress);
+            if($foundMemberAddress){
+                $this->EntityManager->remove($foundMemberAddress);
+                $this->EntityManager->flush();
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public function updateMembersAddress(MemberAddress $membersAddress)
+    {
+        try{
+            if($membersAddress->getId()){
+                $this->EntityManager->persist($membersAddress);
+                $this->EntityManager->flush();
+                if($membersAddress->getId()){
+                    return $membersAddress;
+                }
+            }
+            return null;
+        }catch (\Exception $exception){
+            print_r($exception);
+            return null;
+        }
+    }
+
+
+
+    public function addMembersContact(MemberContact $memberContact)
+    {
+        $memberContact->setId(null);
+        $memberContact->setIsActive(1);
+        $memberContact->setIsDeleted(0);
+        $memberContact->setCreatedDate(new \DateTime('now'));
+        $memberContact->setUpdatedDate(new \DateTime('now'));
+        $this->EntityManager->persist($memberContact);
+        $this->EntityManager->flush();
+        if($memberContact->getId()){
+            return $memberContact;
+        }else{
+            return null;
+        }
+    }
+    public function getAllMembersContact()
+    {
+        $foundMemberContact = [];
+        $allMemberContact = $this->EntityManager->getRepository(MemberAddress::class)->findAll();
+        foreach ($allMemberContact as $memberContact){
+            /**
+             * @var MemberProfile $memberProfile
+             */
+            if(!$memberContact->getisDeleted()){
+                $foundMemberContact[] = $memberContact->getArray();
+            }
+        }
+        return $foundMemberContact;
+    }
+    public function getMembersContact(MemberContact $memberContact)
+    {
+        if($memberContact->getId()){
+            $foundMemberContact = $this->EntityManager->getRepository(MemberProfile::class)->find($memberContact->getId());
+            return $foundMemberContact;
+        }else{
+            return null;
+        }
+    }
+    public function updateMemberContact(MemberContact $memberContact)
+    {
+        try{
+            if($memberContact->getId()){
+                $this->EntityManager->persist($memberContact);
+                $this->EntityManager->flush();
+                if($memberContact->getId()){
+                    return $memberContact;
+                }
+            }
+            return null;
+        }catch (\Exception $exception){
+            print_r($exception);
+            return null;
+        }
+    }
+
+    public function remveMemberContact(MemberContact $memberContact)
+    {
+        if($memberContact){
+            /**
+             * @var MemberAddress $foundMemberAddress
+             */
+            $foundMemberContact = $this->getMemberProfile($memberContact);
+            if($foundMemberContact){
+                $this->EntityManager->remove($foundMemberContact);
+                $this->EntityManager->flush();
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+
+
+
+    public function addMembersPlege(MembersPlege $membersPlege)
+    {
+        $membersPlege->setId(null);
+        $membersPlege->setIsActive(1);
+        $membersPlege->setIsDeleted(0);
+        $membersPlege->setCreatedDate(new \DateTime('now'));
+        $membersPlege->setUpdatedDate(new \DateTime('now'));
+        $this->EntityManager->persist($membersPlege);
+        $this->EntityManager->flush();
+        if($membersPlege->getId()){
+            return $membersPlege;
+        }else{
+            return null;
+        }
+    }
+    public function getAllMembersPlege()
+    {
+        $foundMemberAddress = [];
+        $allMemberAddress = $this->EntityManager->getRepository(MemberAddress::class)->findAll();
+        foreach ($allMemberAddress as $membersAddress){
+            /**
+             * @var MemberProfile $memberProfile
+             */
+            if(!$membersAddress->getisDeleted()){
+                $foundMemberAddress[] = $membersAddress->getArray();
+            }
+        }
+        return $foundMemberAddress;
+    }
+    public function getMembersPlege(MembersPlege $membersPlege)
+    {
+        if($membersPlege->getId()){
+            $foundMembersPlege = $this->EntityManager->getRepository(MemberProfile::class)->find($membersPlege->getId());
+            return $foundMembersPlege;
+        }else{
+            return null;
+        }
+    }
+    public function removeMemberPlege(MembersPlege $membersPlege)
+    {
+        if($membersPlege){
+            /**
+             * @var MemberAddress $foundMemberAddress
+             */
+            $foundMembersPlege = $this->getMemberProfile($$membersPlege);
+            if($foundMembersPlege){
+                $this->EntityManager->remove($foundMembersPlege);
+                $this->EntityManager->flush();
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+    public function updateMemberPlege(MembersPlege $membersPlege)
+    {
+        try{
+            if($membersPlege->getId()){
+                $this->EntityManager->persist($membersPlege);
+                $this->EntityManager->flush();
+                if($membersPlege->getId()){
+                    return $membersPlege;
+                }
+            }
+            return null;
+        }catch (\Exception $exception){
+            print_r($exception);
+            return null;
+        }
+    }
 }
