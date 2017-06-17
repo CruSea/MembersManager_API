@@ -16,33 +16,38 @@ use MembersManager\Entities\User;
 class Service implements ServieMethods
 {
     /**
-     * @var EntityManager $EntityManage
+     * @var EntityManager $EntityManager
      */
     protected $EntityManager;
 
     /**
      * Service constructor.
-     * @param EntityManager $EntityManage
+     * @param EntityManager $EntityManager
      */
-    public function __construct(EntityManager $EntityManage)
+    public function __construct(EntityManager $EntityManager)
     {
-        $this->EntityManage = $EntityManage;
+        $this->EntityManager = $EntityManager;
     }
+
 
     public function addUser(User $user)
     {
-        $user->setId(null);
-        $user->setIsActive(1);
-        $user->setIsDeleted(0);
-        $user->setCreatedDate(new \DateTime('now'));
-        $user->setUpdatedDate(new \DateTime('now'));
-        $user->setUserPass(sha1($user->getUserPass()));
-        $this->EntityManager->persist($user);
-        $this->EntityManager->flush();
-        if($user->getId()){
-            return $user;
-        }else{
-            return null;
+        try{
+            $user->setId(null);
+            $user->setIsActive(0);
+            $user->setIsDeleted(0);
+            $user->setCreatedDate(new \DateTime('now'));
+            $user->setUpdatedDate(new \DateTime('now'));
+            $user->setUserPass(sha1($user->getUserPass()));
+            $this->EntityManager->persist($user);
+            $this->EntityManager->flush();
+            if($user->getId()){
+                return $user;
+            }else{
+                return null;
+            }
+        }catch (\Exception $exception){
+            print $exception->getMessage();
         }
     }
 
@@ -58,30 +63,12 @@ class Service implements ServieMethods
 
     public function getUserByEmail(User $user)
     {
-        $allUser = $this->EntityManager->getRepository(User::class)->findAll();
-        foreach ($allUser as $_user){
-            /**
-             * @var User $_user
-             */
-            if($user->getEmail() == $_user->getEmail()){
-                return $_user;
-            }
-        }
-        return null;
+        // TODO: Implement getUserByEmail() method.
     }
 
     public function getUserByID(User $user)
     {
-        $allUser = $this->EntityManager->getRepository(User::class)->findAll();
-        foreach ($allUser as $_user){
-            /**
-             * @var User $_user
-             */
-            if($user->getId() == $_user->getId()){
-                return $_user;
-            }
-        }
-        return null;
+        // TODO: Implement getUserByID() method.
     }
 
     public function checkUser(User $user)
@@ -92,8 +79,7 @@ class Service implements ServieMethods
                 /**
                  * @var User $_user
                  */
-                if(($_user->getUserPass() == sha1($user->getUserPass())) &&
-                    (($_user->getUserName() == $user->getUserName()) || ($_user->getEmail() == $user->getEmail()))){
+                if(($_user->getUserPass() == sha1($user->getUserPass())) && (($_user->getUserName() == $user->getUserName()) || ($_user->getEmail() == $user->getUserName()))){
                     return $_user;
                 }
             }
@@ -105,39 +91,13 @@ class Service implements ServieMethods
 
     public function updateUser(User $user)
     {
-        try{
-            if($user->getId()){
-                $this->EntityManager->persist($user);
-                $this->EntityManager->flush();
-                if($user->getId()){
-                    return $user;
-                }else{
-                    return null;
-                }
-            }
-        }catch (\Exception $exception){
-            print_r($exception);
-        }
+        // TODO: Implement updateUser() method.
     }
 
     public function removeUser(User $user)
     {
-        if($user){
-            /**
-             * @var User $foundUser
-             */
-            $foundUser = $this->getUser($user);
-            if($foundUser){
-                $this->EntityManager->remove($foundUser);
-                $this->EntityManager->flush();
-                return true;
-            }else{
-                return false;
-            }
-        }
-        return false;
+        // TODO: Implement removeUser() method.
     }
-
 
     public function addPrivilege(Privilege $privilege)
     {
@@ -155,10 +115,6 @@ class Service implements ServieMethods
         }
     }
 
-    /**
-     * @param Privilege $privilege
-     * @return Privilege
-     */
     public function getPrivilege(Privilege $privilege)
     {
         if($privilege->getId()){
@@ -183,6 +139,7 @@ class Service implements ServieMethods
         }
         return $foundPrivileges;
     }
+
     public function getLessPrivilege(Privilege $privilege)
     {
         $foundPrivileges = [];

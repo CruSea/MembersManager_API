@@ -20,6 +20,7 @@ $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/module/Me
 
 // database configuration parameters
 $conn = array(
+
     'dbname' => 'ims',
     'user' => 'root',
     'password' => 'root',

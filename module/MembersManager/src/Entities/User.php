@@ -168,7 +168,7 @@ class User extends BaseTable
             'full_name'=>$this->getFullName(),
             'email'=>$this->getEmail(),
             'phone'=>$this->getPhone(),
-//            'privilege'=>$this->getPrivilege()->getArray(),
+            'privilege'=>$this->getPrivilege()->getArray(),
             'is_deleted'=>$this->getIsDeleted(),
             'is_active'=>$this->getIsActive(),
             'updated_by'=>$this->getUpdatedBy()->getFullName(),

@@ -41,6 +41,8 @@ class MembersController extends AbstractRestfulController
     }
     public function create($data)
     {
-        return new JsonModel(array("API POST Controller"));
+        $process = new ProcessRequest($this->ServiceManager,$data);
+        $process->Process();
+        return new JsonModel($process->getMessage());
     }
 }
