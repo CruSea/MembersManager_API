@@ -5,17 +5,21 @@
  * Date: 6/17/17
  * Time: 1:07 PM
  */
+namespace MembersManager;
 
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use MembersManager\Controller\MembersController;
+use MembersManager\Factories\MembersManagerFactories;
 
 return array(
     'router' => array(
         'routes' => array(
-            'negarit_api' => array(
+            'members_api' => array(
                 'type' => 'segment',
                 'options' => array(
                     'route' => '/api',
                     'defaults' => array(
-                        'controller' => MainController::class,
+                        'controller' => MembersController::class,
                     ),
                 ),
             ),
@@ -23,7 +27,7 @@ return array(
     ),
     'controllers' => array(
         'factories' => array(
-            MainController::class => MainControllerFactory::class,
+            MembersController::class => MembersManagerFactories::class,
         ),
     ),
     'view_manager' => array(

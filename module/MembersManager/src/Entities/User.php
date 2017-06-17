@@ -6,7 +6,7 @@
  * Time: 11:51 AM
  */
 
-namespace NegaritSMS\Entities;
+namespace MembersManager\Entities;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity

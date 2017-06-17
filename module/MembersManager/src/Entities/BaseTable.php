@@ -6,7 +6,7 @@
  * Time: 11:49 AM
  */
 
-namespace NegaritSMS\Entities;
+namespace MembersManager\Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 class BaseTable
