@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="MembersPlege")
  */
-class MembersPlege
+class MembersPlege extends BaseTable
 {
 
     /**
@@ -31,14 +31,18 @@ class MembersPlege
     protected $member_id;
 
     /**
-     * @ORM\Column(name="monthly", type="float", unique=true, nullable=false)
+     *
+     * @ORM\Column(name="plegeInterval",type="float", columnDefinition="ENUM('Monthly','Yearly')")
+     *
      */
-    protected $monthly;
+    protected $plegeInterval;
+
 
     /**
-     * @ORM\Column(name="yearly", type="float", unique=true, nullable=false)
+     * @ORM\Column(name="plegeAmount", type="float", unique=true, nullable=false)
      */
-    protected $yearly;
+    protected $plegeAmount;
+
 
     /**
      * @ORM\Column(name="specialGift", type="float", unique=true, nullable=false)
@@ -64,6 +68,22 @@ class MembersPlege
     public function setOtherSupport($otherSupport)
     {
         $this->otherSupport = $otherSupport;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPlegeAmount()
+    {
+        return $this->plegeAmount;
+    }
+
+    /**
+     * @param mixed $plegeAmount
+     */
+    public function setPlegeAmount($plegeAmount)
+    {
+        $this->plegeAmount = $plegeAmount;
     }
 
 
@@ -102,33 +122,17 @@ class MembersPlege
     /**
      * @return mixed
      */
-    public function getMonthly()
+    public function getPlegeInterval()
     {
-        return $this->monthly;
+        return $this->plegeInterval;
     }
 
     /**
-     * @param mixed $monthly
+     * @param mixed $plegeInterval
      */
-    public function setMonthly($monthly)
+    public function setPlegeInterval($plegeInterval)
     {
-        $this->monthly = $monthly;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getYearly()
-    {
-        return $this->yearly;
-    }
-
-    /**
-     * @param mixed $yearly
-     */
-    public function setYearly($yearly)
-    {
-        $this->yearly = $yearly;
+        $this->plegeInterval = $plegeInterval;
     }
 
     /**
@@ -152,10 +156,16 @@ class MembersPlege
         return array(
             'id'=>$this->getId(),
             'member_id'=>$this->getMemberId(),
-            'monthly'=>$this->getMonthly(),
-            'yearly'=>$this->getYearly(),
+            'plegeInterval'=>$this->getPlegeInterval(),
+            'plegeAmount'=>$this->getPlegeAmount(),
             'specialGift'=>$this->getSpecialGift(),
             'otherSupport'=>$this->getOtherSupport(),
+            'is_deleted'=>$this->getIsDeleted(),
+            'is_active'=>$this->getIsActive(),
+            'updated_by'=>$this->getUpdatedBy()->getFullName(),
+            'updated_date'=>$this->getUpdatedDate(),
+            'created_by'=>$this->getCreatedBy()->getFullName(),
+            'created_date'=>$this->getCreatedDate(),
 
         );
     }

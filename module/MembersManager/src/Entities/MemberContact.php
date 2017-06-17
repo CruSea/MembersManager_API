@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="memberContact")
  */
-class memberContact
+class memberContact extends BaseTable
 {
 
     /**
@@ -35,12 +35,6 @@ class memberContact
      * @ORM\Column(name="officePhone", type="string", unique=true, nullable=false)
      */
     protected $officePhone;
-
-    /**
-     * @ORM\Column(name="mobilePhone", type="string", unique=true, nullable=false)
-     */
-    protected $mobilePhone;
-
 
     /**
      * @ORM\Column(name="homePhone", type="string", unique=true, nullable=false)
@@ -104,22 +98,6 @@ class memberContact
     /**
      * @return mixed
      */
-    public function getMobilePhone()
-    {
-        return $this->mobilePhone;
-    }
-
-    /**
-     * @param mixed $mobilePhone
-     */
-    public function setMobilePhone($mobilePhone)
-    {
-        $this->mobilePhone = $mobilePhone;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getHomePhone()
     {
         return $this->homePhone;
@@ -154,9 +132,14 @@ class memberContact
             'id'=>$this->getId(),
             'member_id'=>$this->getMemberId(),
             'officePhone'=>$this->getOfficePhone(),
-            'mobilePhone'=>$this->getMobilePhone(),
             'homePhone'=>$this->getHomePhone(),
             'POBOX'=>$this->getPOBOX(),
+            'is_deleted'=>$this->getIsDeleted(),
+            'is_active'=>$this->getIsActive(),
+            'updated_by'=>$this->getUpdatedBy()->getFullName(),
+            'updated_date'=>$this->getUpdatedDate(),
+            'created_by'=>$this->getCreatedBy()->getFullName(),
+            'created_date'=>$this->getCreatedDate(),
         );
     }
 }
