@@ -19,5 +19,6 @@ class Module implements ConfigProviderInterface
     public function getConfig()
     {
         // TODO: Implement getConfig() method.
+        return __DIR__''
     }
 }
