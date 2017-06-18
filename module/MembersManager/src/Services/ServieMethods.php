@@ -11,6 +11,7 @@ namespace MembersManager\Services;
 
 use MembersManager\Entities\Group;
 use MembersManager\Entities\GroupedContact;
+use MembersManager\Entities\GroupMessages;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
@@ -105,9 +106,19 @@ interface ServieMethods
     public function getAllGroupedContact();
     public function getGroupedContactByMemberContact(MemberProfile $memberProfile);
     public function getGroupedContactsByGroup(Group $group);
+    public function listContactsByGroup(Group $group);
     public function getGroupedContactsNotInByGroup(Group $group);
     public function getMemberContactsNotInByGroup(Group $group);
     public function updateGroupedContact(GroupedContact $groupedContact);
     public function removeGroupedContact(GroupedContact $groupedContact);
+
+    /**
+     * Company Group Message Table
+     * @return mixed
+     */
+    public function addGroupMessage(GroupMessages $groupMessage);
+    public function getGroupMessage(GroupMessages $groupMessage);
+    public function getGroupMessages();
+    public function removeGroupMessage(GroupMessages $groupMessage);
 
 }

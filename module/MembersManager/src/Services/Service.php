@@ -12,6 +12,7 @@ namespace MembersManager\Services;
 use Doctrine\ORM\EntityManager;
 use MembersManager\Entities\Group;
 use MembersManager\Entities\GroupedContact;
+use MembersManager\Entities\GroupMessages;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\MemberAddress;
 use MembersManager\Entities\MemberContact;
@@ -640,6 +641,22 @@ class Service implements ServieMethods
         return $foundGroupedContact;
     }
 
+    public function listContactsByGroup(Group $group)
+    {
+        $foundGroupedContact = [];
+        $allGroupedContact = $this->EntityManager->getRepository(GroupedContact::class)->findAll();
+        foreach ($allGroupedContact as $grouped_comtact){
+            /**
+             * @var GroupedContact $grouped_comtact
+             */
+            if(!$grouped_comtact->getisDeleted() && $grouped_comtact->getGroup()->getId() == $group->getId()){
+                $foundGroupedContact[] = $grouped_comtact->getMemberProfile();
+            }
+        }
+        return $foundGroupedContact;
+    }
+
+
     public function getGroupedContactsNotInByGroup(Group $group)
     {
         $foundGroupedContact = [];
@@ -726,6 +743,69 @@ class Service implements ServieMethods
             $foundGroupedContact = $this->getGroupedContact($groupedContact);
             if($foundGroupedContact){
                 $this->EntityManager->remove($groupedContact);
+                $this->EntityManager->flush();
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public function addGroupMessage(GroupMessages $groupMessage)
+    {
+        try{
+            $groupMessage->setId(null);
+            $groupMessage->setIsActive(1);
+            $groupMessage->setIsDeleted(0);
+            $groupMessage->setCreatedDate(new \DateTime('now'));
+            $groupMessage->setUpdatedDate(new \DateTime('now'));
+            $this->EntityManager->persist($groupMessage);
+            $this->EntityManager->flush();
+            if($groupMessage->getId()){
+                return $groupMessage;
+            }else{
+                return null;
+            }
+        }catch (\Exception $exception){
+            echo $exception->getMessage();
+        }
+    }
+
+    public function getGroupMessage(GroupMessages $groupMessage)
+    {
+        if($groupMessage->getId()){
+            $foundGroupedMessage = $this->EntityManager->getRepository(GroupMessages::class)->find($groupMessage->getId());
+            return $foundGroupedMessage;
+        }else{
+            return null;
+        }
+    }
+
+    public function getGroupMessages()
+    {
+        $foundGroupMessages = [];
+        $allGroupMessages = $this->EntityManager->getRepository(GroupMessages::class)->findAll();
+        foreach ($allGroupMessages as $groupMessage){
+            /**
+             * @var GroupMessages $groupMessage
+             */
+            if(!$groupMessage->getisDeleted()){
+                $foundGroupMessages[] = $groupMessage->getArray();
+            }
+        }
+        return $foundGroupMessages;
+    }
+
+    public function removeGroupMessage(GroupMessages $groupMessage)
+    {
+        if($groupMessage){
+            /**
+             * @var GroupMessages  $foundMemberContact
+             */
+            $foundMemberContact = $this->getGroupMessage($groupMessage);
+            if($foundMemberContact){
+                $this->EntityManager->remove($foundMemberContact);
                 $this->EntityManager->flush();
                 return true;
             }else{

@@ -10,6 +10,7 @@ namespace MembersManager\Controller;
 
 use MembersManager\Entities\Group;
 use MembersManager\Entities\GroupedContact;
+use MembersManager\Entities\GroupMessages;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
@@ -52,6 +53,7 @@ abstract class AvailableServices extends BasicEnum {
     const ADD_MEMBER_PROFILE = 'add_member_profile';
     const ADD_NEW_GROUP = 'add_new_group';
     const ADD_GROUP_CONTACT = 'add_group_contact';
+    const ADD_NEW_GROUP_MESSAGE = 'add_new_group_message';
 
 
     const GET_ALL_USERS = 'get_all_users';
@@ -89,6 +91,11 @@ class FORMAT_GROUP extends BasicEnum {
 class FORMAT_GROUP_CONTACT extends BasicEnum {
     const GROUP_ID = 'group_id';
     const CONTACT_ID = 'contact_id';
+}
+class FORMAT_GROUP_MESSAGE extends BasicEnum {
+    const GROUP_ID = 'group_id';
+    const CAMPAIGN_NAME = 'campaign_name';
+    const MESSAGE = 'message';
 }
 class FORMAT_MEMBER_REGISTER extends BasicEnum {
     const USER_NAME = 'user_name';
@@ -301,6 +308,63 @@ class ProcessRequest
                     }
                 } else {
                     $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
+                }
+            } elseif ($this->getRequestedService() == AvailableServices::ADD_NEW_GROUP_MESSAGE) {
+                /**
+                 * @var User $superAdmin
+                 */
+                $mainUser = $this->getMainUser();
+                if ($mainUser) {
+                    if (FORMAT_GROUP_MESSAGE::isValidParam($this->getRequestParam())) {
+                        $newGroup = new Group();
+                        $newGroup->setId($this->getRequestParam()[FORMAT_GROUP_MESSAGE::GROUP_ID]);
+                        /**
+                         * @var Group $foundGroup
+                         */
+                        $foundGroup = $this->ServiceManager->getGroup($newGroup);
+                        if($foundGroup){
+                            $newGroupMessage = new GroupMessages();
+                            $newGroupMessage->setMessage($this->getRequestParam()[FORMAT_GROUP_MESSAGE::MESSAGE]);
+                            $newGroupMessage->setCampaignName($this->getRequestParam()[FORMAT_GROUP_MESSAGE::CAMPAIGN_NAME]);
+                            $newGroupMessage->setGroup($foundGroup);
+                            $newGroupMessage->setCreatedBy($mainUser);
+                            $newGroupMessage->setUpdatedBy($mainUser);
+                            $foundGroupedMessage = $this->ServiceManager->addGroupMessage($newGroupMessage);
+                            if($foundGroupedMessage){
+                                $contacts = $this->ServiceManager->listContactsByGroup($foundGroup);
+                                if($contacts){
+                                    foreach ($contacts as $contact){
+                                        /**
+                                         * @var MemberProfile $contact
+                                         */
+                                        $newSendMessage = array(
+                                            "campaign_name"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::CAMPAIGN_NAME],
+                                            "to"=>$contact->getPhone(),
+                                            "message"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::MESSAGE],
+                                            );
+                                        $sendData = array(
+//                                            "user_name"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::CAMPAIGN_NAME],
+                                            "user_name"=>"george",
+//                                            "user_pass"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::CAMPAIGN_NAME],
+                                            "user_pass"=>"passben",
+                                            "service"=>"add_new_send_message",
+                                            "param"=>json_encode($newSendMessage),
+                                        );
+                                        $this->sendNegaritSMS($sendData);
+                                    }
+                                }
+                                $this->Message[ResponsesType::RESPONSE] = $foundGroupedMessage->getArray();
+                            }else{
+                                $this->Message[ResponsesType::ERROR] = "Error in adding contact group";
+                            }
+                        }else{
+                            $this->Message[ResponsesType::ERROR] = "data not found here";
+                        }
+                    }else{
+                        $this->Message[ResponsesType::ERROR] = Responses::Invalid_Param;
+                    }
+                } else {
+                    $this->Message[ResponsesType::ERROR] = "The Super Admin could not be found now! please try again!!!";
                 }
             } elseif ($this->getRequestedService() == AvailableServices::ADD_GROUP_CONTACT) {
                 /** Add new user */
@@ -656,6 +720,28 @@ class ProcessRequest
             $randString .=$characters[rand(0,strlen($characters)-1)];
         }
         return $randString;
+    }
+    private function sendNegaritSMS($data){
+        $url = 'http://api.negarit.net/negarit';
+        $options = array(
+            'http' => array(
+                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method'  => 'POST',
+                'content' => http_build_query($data)
+            )
+        );
+        $context  = stream_context_create($options);
+        file_get_contents($url, false, $context);
+
+
+
+//        $r = new \HttpRequest('http://api.negarit.net/negarit', \HttpRequest::METH_POST);
+//        $r->addPostFields($data);
+//        try {
+//            echo $r->send()->getBody();
+//        } catch (\Exception $ex) {
+//            echo $ex;
+//        }
     }
 
 //    private function SendActivationEmail(ActivationEmail $activationEmail){
