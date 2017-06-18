@@ -10,7 +10,7 @@ namespace MembersManager\Entities;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
- * @ORM\Table(name="grouped_contacts")
+ * @ORM\Table(name="grouped_contacts",uniqueConstraints={@ORM\UniqueConstraint(name="name", columns={"group_id", "member_profile_id"})})
  */
 class GroupedContact extends BaseTable
 {
@@ -27,13 +27,11 @@ class GroupedContact extends BaseTable
      */
     protected $group;
     /**
-     * @ORM\Column(name="name", type="string", unique=true, nullable=false)
+     * @ORM\ManyToOne(targetEntity="MemberProfile")
+     * @ORM\JoinColumn(name="member_profile_id", referencedColumnName="id")
+     * @var MemberProfile $memberProfile
      */
-    protected $name;
-    /**
-     * @ORM\Column(name="description", type="string", unique=false, nullable=true)
-     */
-    protected $description;
+    protected $memberProfile;
 
     /**
      * @return mixed
@@ -68,35 +66,19 @@ class GroupedContact extends BaseTable
     }
 
     /**
-     * @return mixed
+     * @return MemberProfile
      */
-    public function getName()
+    public function getMemberProfile()
     {
-        return $this->name;
+        return $this->memberProfile;
     }
 
     /**
-     * @param mixed $name
+     * @param MemberProfile $memberProfile
      */
-    public function setName($name)
+    public function setMemberProfile($memberProfile)
     {
-        $this->name = $name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param mixed $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
+        $this->memberProfile = $memberProfile;
     }
 
 
@@ -104,9 +86,8 @@ class GroupedContact extends BaseTable
     public function getArray(){
         return array(
             'id'=>$this->getId(),
-            'name'=>$this->getName(),
-            'description'=>$this->getDescription(),
             'group'=>$this->getGroup()->getArray(),
+            'member_profile'=>$this->getMemberProfile()->getArray(),
             'is_deleted'=>$this->getIsDeleted(),
             'is_active'=>$this->getIsActive(),
             'updated_by'=>$this->getUpdatedBy()->getFullName(),

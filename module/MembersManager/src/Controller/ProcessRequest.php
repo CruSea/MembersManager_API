@@ -8,6 +8,8 @@
 
 namespace MembersManager\Controller;
 
+use MembersManager\Entities\Group;
+use MembersManager\Entities\GroupedContact;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
@@ -48,12 +50,23 @@ abstract class AvailableServices extends BasicEnum {
 
     const ADD_USER = 'add_user';
     const ADD_MEMBER_PROFILE = 'add_member_profile';
+    const ADD_NEW_GROUP = 'add_new_group';
+    const ADD_GROUP_CONTACT = 'add_group_contact';
+
+
     const GET_ALL_USERS = 'get_all_users';
+    const GET_ALL_GROUPS = 'get_all_groups';
     const GET_ALL_MEMBER_CONTACTS = 'get_all_member_contacts';
+    const GET_ALL_MEMBER_CONTACTS_IN_GROUP = 'get_all_member_contacts_in_group';
+    const GET_ALL_MEMBER_CONTACTS_NOT_IN_GROUP = 'get_all_member_contacts_not_in_group';
     const GET_USER_PRIVILEGE = 'get_user_privilege';
-    const REMOVE_USER = 'remove_user';
+
     const ACTIVATE_USER = 'activate_user';
     const DEACTIVATE_USER = 'deactivate_user';
+
+    const REMOVE_USER = 'remove_user';
+    const REMOVE_GROUP = 'remove_group';
+    const REMOVE_GROUPED_CONTACT = 'remove_grouped_contact';
 
 }
 class FORMAT_REGISTER extends BasicEnum {
@@ -68,6 +81,14 @@ class FORMAT_USER_REGISTER extends BasicEnum {
     const USER_EMAIL = 'email';
     const FULL_NAME = 'full_name';
     const PRIVILEGE = 'privilege_id';
+}
+class FORMAT_GROUP extends BasicEnum {
+    const GROUP_NAME = 'name';
+    const GROUP_DESCRIPTION = 'description';
+}
+class FORMAT_GROUP_CONTACT extends BasicEnum {
+    const GROUP_ID = 'group_id';
+    const CONTACT_ID = 'contact_id';
 }
 class FORMAT_MEMBER_REGISTER extends BasicEnum {
     const USER_NAME = 'user_name';
@@ -256,6 +277,77 @@ class ProcessRequest
                 } else {
                     $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
                 }
+            } elseif ($this->getRequestedService() == AvailableServices::ADD_NEW_GROUP) {
+                /** Add new user */
+                if (FORMAT_GROUP::isValidParam($this->getRequestParam())) {
+                    /**
+                     * @var User $superAdmin
+                     */
+                    $superAdmin = $this->getSuperAdmin();
+                    if ($superAdmin) {
+                        $newGroup = new Group();
+                        $newGroup->setName($this->getRequestParam()[FORMAT_GROUP::GROUP_NAME]);
+                        $newGroup->setDescription($this->getRequestParam()[FORMAT_GROUP::GROUP_DESCRIPTION]);
+                        $newGroup->setUpdatedBy($superAdmin);
+                        $newGroup->setCreatedBy($superAdmin);
+                        $addedGroup = $this->ServiceManager->addGroup($newGroup);
+                        if ($addedGroup) {
+                            $this->Message[ResponsesType::RESPONSE] = $addedGroup->getArray();
+                        } else {
+                            $this->Message[ResponsesType::ERROR] = "Failed to add Group";
+                        }
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "The Super Admin could not be found now! please try again!!!";
+                    }
+                } else {
+                    $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
+                }
+            } elseif ($this->getRequestedService() == AvailableServices::ADD_GROUP_CONTACT) {
+                /** Add new user */
+                if (FORMAT_GROUP_CONTACT::isValidParam($this->getRequestParam())) {
+                    /**
+                     * @var User $superAdmin
+                     */
+                    $mainUser = $this->getMainUser();
+                    if ($mainUser) {
+                        if (FORMAT_GROUP_CONTACT::isValidParam($this->getRequestParam())) {
+                            $newContact = new MemberProfile();
+                            $newContact->setId($this->getRequestParam()[FORMAT_GROUP_CONTACT::CONTACT_ID]);
+                            /**
+                             * @var MemberProfile $foundContact
+                             */
+                            $foundContact = $this->ServiceManager->getMemberProfile($newContact);
+
+                            $newGroup = new Group();
+                            $newGroup->setId($this->getRequestParam()[FORMAT_GROUP_CONTACT::GROUP_ID]);
+                            /**
+                             * @var Group $foundGroup
+                             */
+                            $foundGroup = $this->ServiceManager->getGroup($newGroup);
+                            if($foundContact && $foundGroup){
+                                $newGroupedContact = new GroupedContact();
+                                $newGroupedContact->setMemberProfile($foundContact);
+                                $newGroupedContact->setGroup($foundGroup);
+                                $newGroupedContact->setCreatedBy($mainUser);
+                                $newGroupedContact->setUpdatedBy($mainUser);
+                                $foundGroupedContact = $this->ServiceManager->addGroupedContact($newGroupedContact);
+                                if($foundGroupedContact){
+                                    $this->Message[ResponsesType::RESPONSE] = $foundGroupedContact->getArray();
+                                }else{
+                                    $this->Message[ResponsesType::ERROR] = "Error in adding contact group";
+                                }
+                            }else{
+                                $this->Message[ResponsesType::ERROR] = "could not found contact and group";
+                            }
+                        } else {
+                            $this->Message[ResponsesType::ERROR] = Responses::Invalid_Param;
+                        }
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "The Super Admin could not be found now! please try again!!!";
+                    }
+                } else {
+                    $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
+                }
             } elseif ($this->getRequestedService() == AvailableServices::ADD_MEMBER_PROFILE) {
                 /** Add new user */
                 if (FORMAT_USER_REGISTER::isValidParam($this->getRequestParam())) {
@@ -304,7 +396,18 @@ class ProcessRequest
                         $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
                     }
                 }
-            } elseif ($this->getRequestedService() == AvailableServices::GET_ALL_MEMBER_CONTACTS) {
+            } elseif ($this->getRequestedService() == AvailableServices::GET_ALL_GROUPS) {
+                /** Log in user */
+                $found = $this->getMainUser();
+                if ($found) {
+                    if ($found->getisActive() && $found->getPrivilege()->getId() < 3) {
+                        $foundUsers = $this->ServiceManager->getAllGroup();
+                        $this->Message[ResponsesType::RESPONSE] = $foundUsers;
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
+                    }
+                }
+            }elseif ($this->getRequestedService() == AvailableServices::GET_ALL_MEMBER_CONTACTS) {
                 /** Log in user */
                 $found = $this->getMainUser();
                 if ($found) {
@@ -315,7 +418,57 @@ class ProcessRequest
                         $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
                     }
                 }
-            }elseif ($this->getRequestedService() == AvailableServices::GET_USER_PRIVILEGE) {
+            }elseif ($this->getRequestedService() == AvailableServices::GET_ALL_MEMBER_CONTACTS_IN_GROUP) {
+                /** Log in user */
+                $found = $this->getMainUser();
+                if ($found) {
+                    if ($found->getisActive() && $found->getPrivilege()->getId() < 3) {
+                        if (FORMAT_ByItemID::isValidParam($this->getRequestParam())) {
+                            $newGroup = new Group();
+                            $newGroup->setId($this->getRequestParam()[FORMAT_ByItemID::ITEM_ID]);
+                            /**
+                             * @var Group $foundGroup
+                             */
+                            $foundGroup = $this->ServiceManager->getGroup($newGroup);
+                            if($foundGroup){
+                                $foundContact = $this->ServiceManager->getGroupedContactsByGroup($foundGroup);
+                                $this->Message[ResponsesType::RESPONSE] = $foundContact;
+                            }else{
+                                $this->Message[ResponsesType::ERROR] = "there is no contacts in the company group";
+                            }
+                        }else{
+                            $this->Message[ResponsesType::ERROR] = Responses::Invalid_Param;
+                        }
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
+                    }
+                }
+            }elseif ($this->getRequestedService() == AvailableServices::GET_ALL_MEMBER_CONTACTS_NOT_IN_GROUP) {
+                /** Log in user */
+                $found = $this->getMainUser();
+                if ($found) {
+                    if ($found->getisActive() && $found->getPrivilege()->getId() < 3) {
+                        if (FORMAT_ByItemID::isValidParam($this->getRequestParam())) {
+                            $newGroup = new Group();
+                            $newGroup->setId($this->getRequestParam()[FORMAT_ByItemID::ITEM_ID]);
+                            /**
+                             * @var Group $foundGroup
+                             */
+                            $foundGroup = $this->ServiceManager->getGroup($newGroup);
+                            if($foundGroup){
+                                $foundContact = $this->ServiceManager->getMemberContactsNotInByGroup($foundGroup);
+                                $this->Message[ResponsesType::RESPONSE] = $foundContact;
+                            }else{
+                                $this->Message[ResponsesType::ERROR] = "there is no contacts in the company group";
+                            }
+                        }else{
+                            $this->Message[ResponsesType::ERROR] = Responses::Invalid_Param;
+                        }
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
+                    }
+                }
+            } elseif ($this->getRequestedService() == AvailableServices::GET_USER_PRIVILEGE) {
                 /** Log in user */
                 $found = $this->getMainUser();
                 if ($found) {
@@ -356,7 +509,65 @@ class ProcessRequest
                         $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
                     }
                 }
-            } elseif ($this->getRequestedService() == AvailableServices::ACTIVATE_USER) {
+            } elseif ($this->getRequestedService() == AvailableServices::REMOVE_GROUP) {
+                /** Log in user */
+                $found = $this->getMainUser();
+                if ($found) {
+                    if ($found->getisActive() && $found->getPrivilege()->getId() < 3) {
+                        if (FORMAT_ByItemID::isValidParam($this->getRequestParam())) {
+                            $newGroup = new Group();
+                            $newGroup->setId($this->getRequestParam()[FORMAT_ByItemID::ITEM_ID]);
+                            /**
+                             * @var Group $foundGroup
+                             */
+                            $foundGroup = $this->ServiceManager->getGroup($newGroup);
+                            if ($foundGroup) {
+                                $foundGroup->setIsActive(0);
+                                $foundGroup->setIsDeleted(1);
+                                if ($this->ServiceManager->updateGroup($foundGroup)) {
+                                    $this->Message[ResponsesType::RESPONSE] = "Group Deleted!!!";
+                                } else {
+                                    $this->Message[ResponsesType::ERROR] = Responses::Failed;
+                                }
+                            } else {
+                                $this->Message[ResponsesType::ERROR] = Responses::Failed;
+                            }
+                        } else {
+                            $this->Message[ResponsesType::ERROR] = "Invalid Param";
+                        }
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
+                    }
+                }
+            }elseif ($this->getRequestedService() == AvailableServices::REMOVE_GROUPED_CONTACT) {
+                /** Log in user */
+                $found = $this->getMainUser();
+                if ($found) {
+                    if ($found->getisActive() && $found->getPrivilege()->getId() < 3) {
+                        if (FORMAT_ByItemID::isValidParam($this->getRequestParam())) {
+                            $newGroup = new GroupedContact();
+                            $newGroup->setId($this->getRequestParam()[FORMAT_ByItemID::ITEM_ID]);
+                            /**
+                             * @var GroupedContact $foundGroup
+                             */
+                            $foundGroup = $this->ServiceManager->getGroupedContact($newGroup);
+                            if ($foundGroup) {
+                                if ($this->ServiceManager->removeGroupedContact($foundGroup)) {
+                                    $this->Message[ResponsesType::RESPONSE] = "Group Deleted!!!";
+                                } else {
+                                    $this->Message[ResponsesType::ERROR] = Responses::Failed;
+                                }
+                            } else {
+                                $this->Message[ResponsesType::ERROR] = Responses::Failed;
+                            }
+                        } else {
+                            $this->Message[ResponsesType::ERROR] = "Invalid Param";
+                        }
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "Your account is inactive!";
+                    }
+                }
+            }elseif ($this->getRequestedService() == AvailableServices::ACTIVATE_USER) {
                 /** Log in user */
                 $found = $this->getMainUser();
                 if ($found) {

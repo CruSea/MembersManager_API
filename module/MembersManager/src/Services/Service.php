@@ -11,6 +11,7 @@ namespace MembersManager\Services;
 
 use Doctrine\ORM\EntityManager;
 use MembersManager\Entities\Group;
+use MembersManager\Entities\GroupedContact;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\MemberAddress;
 use MembersManager\Entities\MemberContact;
@@ -298,13 +299,13 @@ class Service implements ServieMethods
     public function getAllGroup()
     {
         $foundGroups = [];
-        $allfoundGroups = $this->EntityManager->getRepository(MemberProfile::class)->findAll();
+        $allfoundGroups = $this->EntityManager->getRepository(Group::class)->findAll();
         foreach ($allfoundGroups as $group){
             /**
              * @var Group $group
              */
             if(!$group->getisDeleted()){
-                $foundMemberProfile[] = $group->getArray();
+                $foundGroups[] = $group->getArray();
             }
         }
         return $foundGroups;
@@ -578,4 +579,161 @@ class Service implements ServieMethods
             return null;
         }
     }
+
+    public function addGroupedContact(GroupedContact $groupedContact)
+    {
+        try{
+            $groupedContact->setId(null);
+            $groupedContact->setIsActive(1);
+            $groupedContact->setIsDeleted(0);
+            $groupedContact->setCreatedDate(new \DateTime('now'));
+            $groupedContact->setUpdatedDate(new \DateTime('now'));
+            $this->EntityManager->persist($groupedContact);
+            $this->EntityManager->flush();
+            if($groupedContact->getId()){
+                return $groupedContact;
+            }else{
+                return null;
+            }
+        }catch (\Exception $exception){
+            echo $exception->getMessage();
+        }
+    }
+
+    public function getGroupedContact(GroupedContact $groupedContact)
+    {
+        if($groupedContact->getId()){
+            $foundGroupedContact = $this->EntityManager->getRepository(GroupedContact::class)->find($groupedContact->getId());
+            return $foundGroupedContact;
+        }else{
+            return null;
+        }
+    }
+
+    public function getAllGroupedContact()
+    {
+        $foundGroupedContact = [];
+        $allGroupedContact = $this->EntityManager->getRepository(GroupedContact::class)->findAll();
+        foreach ($allGroupedContact as $grouped_comtact){
+            /**
+             * @var GroupedContact $grouped_comtact
+             */
+            if(!$grouped_comtact->getisDeleted()){
+                $foundGroupedContact[] = $grouped_comtact->getArray();
+            }
+        }
+        return $foundGroupedContact;
+    }
+
+    public function getGroupedContactsByGroup(Group $group)
+    {
+        $foundGroupedContact = [];
+        $allGroupedContact = $this->EntityManager->getRepository(GroupedContact::class)->findAll();
+        foreach ($allGroupedContact as $grouped_comtact){
+            /**
+             * @var GroupedContact $grouped_comtact
+             */
+            if(!$grouped_comtact->getisDeleted() && $grouped_comtact->getGroup()->getId() == $group->getId()){
+                $foundGroupedContact[] = $grouped_comtact->getArray();
+            }
+        }
+        return $foundGroupedContact;
+    }
+
+    public function getGroupedContactsNotInByGroup(Group $group)
+    {
+        $foundGroupedContact = [];
+        $allGroupedContact = $this->EntityManager->getRepository(GroupedContact::class)->findAll();
+        foreach ($allGroupedContact as $grouped_comtact){
+            /**
+             * @var GroupedContact $grouped_comtact
+             */
+            if(!$grouped_comtact->getisDeleted() && $grouped_comtact->getGroup()->getId() != $group->getId()){
+                $foundGroupedContact[] = $grouped_comtact->getArray();
+            }
+        }
+        return $foundGroupedContact;
+    }
+
+    public function getMemberContactsNotInByGroup(Group $group)
+    {
+        $foundMemberContact = [];
+        $allMemberContact = $this->EntityManager->getRepository(MemberProfile::class)->findAll();
+        foreach ($allMemberContact as $member_contact){
+            /**
+             * @var MemberProfile $member_contact
+             */
+            $grouped_contact = $this->getGroupedContactByMemberContactAndGroup($member_contact,$group);
+            if(!$grouped_contact){
+                if(!$member_contact->getisDeleted()){
+                    $foundMemberContact[] = $member_contact->getArray();
+                }
+            }
+        }
+        return $foundMemberContact;
+    }
+
+    public function getGroupedContactByMemberContact(MemberProfile $memberProfile)
+    {
+        $allGroupedContact = $this->EntityManager->getRepository(GroupedContact::class)->findAll();
+        foreach ($allGroupedContact as $grouped_comtact){
+            /**
+             * @var GroupedContact $grouped_comtact
+             */
+            if(!$grouped_comtact->getisDeleted() && $grouped_comtact->getMemberProfile()->getId() == $memberProfile->getId()){
+                return $grouped_comtact;
+            }
+        }
+        return null;
+    }
+    public function getGroupedContactByMemberContactAndGroup(MemberProfile $memberProfile ,Group $group)
+    {
+        $allGroupedContact = $this->EntityManager->getRepository(GroupedContact::class)->findAll();
+        foreach ($allGroupedContact as $grouped_comtact){
+            /**
+             * @var GroupedContact $grouped_comtact
+             */
+            if(!$grouped_comtact->getisDeleted() && $grouped_comtact->getMemberProfile()->getId() == $memberProfile->getId() && $grouped_comtact->getGroup()->getId() == $group->getId()){
+                return $grouped_comtact;
+            }
+        }
+        return null;
+    }
+
+    public function updateGroupedContact(GroupedContact $groupedContact)
+    {
+        try{
+            if($groupedContact->getId()){
+                $this->EntityManager->persist($groupedContact);
+                $this->EntityManager->flush();
+                if($groupedContact->getId()){
+                    return $groupedContact;
+                }
+            }
+            return null;
+        }catch (\Exception $exception){
+            print_r($exception);
+            return null;
+        }
+    }
+
+    public function removeGroupedContact(GroupedContact $groupedContact)
+    {
+        if($groupedContact){
+            /**
+             * @var GroupedContact $foundMemberPlege
+             */
+            $foundGroupedContact = $this->getGroupedContact($groupedContact);
+            if($foundGroupedContact){
+                $this->EntityManager->remove($groupedContact);
+                $this->EntityManager->flush();
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+
+
 }

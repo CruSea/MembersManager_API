@@ -10,6 +10,7 @@ namespace MembersManager\Services;
 
 
 use MembersManager\Entities\Group;
+use MembersManager\Entities\GroupedContact;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
@@ -95,5 +96,18 @@ interface ServieMethods
     public function getAllMembersContact();
     public function updateMemberContact(MemberContact $memberContact);
     public function remveMemberContact(MemberContact $memberContact);
+    /**
+     * Groupeded Contact
+     * @return mixed
+     */
+    public function addGroupedContact(GroupedContact $groupedContact);
+    public function getGroupedContact(GroupedContact $groupedContact);
+    public function getAllGroupedContact();
+    public function getGroupedContactByMemberContact(MemberProfile $memberProfile);
+    public function getGroupedContactsByGroup(Group $group);
+    public function getGroupedContactsNotInByGroup(Group $group);
+    public function getMemberContactsNotInByGroup(Group $group);
+    public function updateGroupedContact(GroupedContact $groupedContact);
+    public function removeGroupedContact(GroupedContact $groupedContact);
 
 }
