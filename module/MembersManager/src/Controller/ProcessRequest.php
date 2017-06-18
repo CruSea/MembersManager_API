@@ -74,6 +74,8 @@ abstract class AvailableServices extends BasicEnum {
     const REMOVE_GROUPED_CONTACT = 'remove_grouped_contact';
     const REMOVE_GROUP_MESSAGE = 'remove_group_message';
 
+    const UPDATE_CONTACT = 'update_contact';
+
 }
 class FORMAT_REGISTER extends BasicEnum {
     const USER_NAME = 'user_name';
@@ -100,6 +102,13 @@ class FORMAT_NEW_CONTACT extends BasicEnum {
     const CONTACT_EMAIL = 'email';
     const CONTACT_AGE = 'age';
     const CONTACT_SEX = 'sex';
+}
+class FORMAT_UPDATE_CONTACT extends BasicEnum {
+    const CONTACT_CONTACT_ID = 'contact_id';
+    const CONTACT_FIRST_NAME = 'first_name';
+    const CONTACT_MIDDLE_NAME = 'middle_name';
+    const CONTACT_PHONE = 'phone';
+    const CONTACT_EMAIL = 'email';
 }
 class FORMAT_GROUP_CONTACT extends BasicEnum {
     const GROUP_ID = 'group_id';
@@ -352,7 +361,37 @@ class ProcessRequest
                 } else {
                     $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
                 }
-            } elseif ($this->getRequestedService() == AvailableServices::ADD_NEW_GROUP_MESSAGE) {
+            } elseif ($this->getRequestedService() == AvailableServices::UPDATE_CONTACT) {
+                /** Add new user */
+                if (FORMAT_UPDATE_CONTACT::isValidParam($this->getRequestParam())) {
+                    $superAdmin = $this->getSuperAdmin();
+                    if ($superAdmin) {
+                        $oldMember = new MemberProfile();
+                        $oldMember->setId($this->getRequestParam()[FORMAT_UPDATE_CONTACT::CONTACT_CONTACT_ID]);
+                        $newMemberProfile = $this->ServiceManager->getMemberProfile($oldMember);
+                        if($newMemberProfile){
+                            $newMemberProfile->setFirstName($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_FIRST_NAME]);
+                            $newMemberProfile->setMiddleName($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_MIDDLE_NAME]);
+                            $newMemberProfile->setPhone($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_PHONE]);
+                            $newMemberProfile->setEmail($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_EMAIL]);
+                            $newMemberProfile->setUpdatedBy($superAdmin);
+                            $addedContact = $this->ServiceManager->updateMemberProfile($newMemberProfile);
+                            if ($addedContact) {
+                                $this->Message[ResponsesType::RESPONSE] = "Contact Updated Successfully";
+                            } else {
+                                $this->Message[ResponsesType::ERROR] = "Failed to add Group";
+                            }
+                        }else{
+                            $this->Message[ResponsesType::ERROR] = "member not found";
+                        }
+
+                    } else {
+                        $this->Message[ResponsesType::ERROR] = "The Super Admin could not be found now! please try again!!!";
+                    }
+                } else {
+                    $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
+                }
+            }elseif ($this->getRequestedService() == AvailableServices::ADD_NEW_GROUP_MESSAGE) {
                 /**
                  * @var User $superAdmin
                  */
@@ -380,10 +419,11 @@ class ProcessRequest
                                         /**
                                          * @var MemberProfile $contact
                                          */
+                                        $message = $this->ProcessMessage($contact,$this->getRequestParam()[FORMAT_GROUP_MESSAGE::MESSAGE]);
                                         $newSendMessage = array(
                                             "campaign_name"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::CAMPAIGN_NAME],
                                             "to"=>$contact->getPhone(),
-                                            "message"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::MESSAGE],
+                                            "message"=>$message,
                                             );
                                         $sendData = array(
 //                                            "user_name"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::CAMPAIGN_NAME],
@@ -847,15 +887,18 @@ class ProcessRequest
         $context  = stream_context_create($options);
         file_get_contents($url, false, $context);
 
-
-
-//        $r = new \HttpRequest('http://api.negarit.net/negarit', \HttpRequest::METH_POST);
-//        $r->addPostFields($data);
-//        try {
-//            echo $r->send()->getBody();
-//        } catch (\Exception $ex) {
-//            echo $ex;
-//        }
+    }
+    private function ProcessMessage(MemberProfile $contact, $message){
+        $newMessage = $message;
+        $str = $message;
+        $sample = "{NAME}";
+        $NamePos = strrpos($str,$sample);
+        if($NamePos){
+            if(substr($newMessage,$NamePos,strlen($sample)) == "{NAME}"){
+                $newMessage = substr($str,0,$NamePos).$contact->getFirstName()." ".$contact->getMiddleName().substr($str,$NamePos+strlen($sample),strlen($str));
+            }
+        }
+        return $newMessage;
     }
 
 //    private function SendActivationEmail(ActivationEmail $activationEmail){
