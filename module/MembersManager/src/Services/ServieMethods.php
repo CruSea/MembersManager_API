@@ -9,6 +9,7 @@
 namespace MembersManager\Services;
 
 
+use MembersManager\Entities\Group;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
@@ -47,4 +48,14 @@ interface ServieMethods
     public function getAllMemberProfile();
     public function updateMemberProfile(MemberProfile $memberProfile);
     public function removeMemberProfile(MemberProfile $memberProfile);
+
+    /**
+     * Member Profiles
+     * @return mixed
+     */
+    public function addGroup(Group $group);
+    public function getGroup(Group $group);
+    public function getAllGroup();
+    public function updateGroup(Group $group);
+    public function removeGroup(Group $group);
 }

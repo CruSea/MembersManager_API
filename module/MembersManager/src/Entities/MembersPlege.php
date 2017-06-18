@@ -32,7 +32,7 @@ class MembersPlege extends BaseTable
 
     /**
      *
-     * @ORM\Column(name="plegeInterval",type="float", columnDefinition="ENUM('Monthly','Yearly')")
+     * @ORM\Column(name="plegeInterval",type="float")
      *
      */
     protected $plegeInterval;

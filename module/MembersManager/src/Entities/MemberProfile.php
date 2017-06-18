@@ -44,8 +44,6 @@ class MemberProfile extends BaseTable
      */
     protected $sex;
 
-
-
     /**
      * @return mixed
      */
@@ -76,6 +74,22 @@ class MemberProfile extends BaseTable
     public function setFirstName($firstName)
     {
         $this->firstName = $firstName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMiddleName()
+    {
+        return $this->middleName;
+    }
+
+    /**
+     * @param mixed $middleName
+     */
+    public function setMiddleName($middleName)
+    {
+        $this->middleName = $middleName;
     }
 
     /**
@@ -126,16 +140,6 @@ class MemberProfile extends BaseTable
         $this->sex = $sex;
     }
 
-
-
-
-    /**
-     * @param mixed $qualification
-     */
-    public function setQualification($qualification)
-    {
-        $this->qualification = $qualification;
-    }
 
     public function getArray(){
         return array(

@@ -10,6 +10,7 @@ namespace MembersManager\Services;
 
 
 use Doctrine\ORM\EntityManager;
+use MembersManager\Entities\Group;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
@@ -256,6 +257,82 @@ class Service implements ServieMethods
             $foundMemberProfile = $this->getMemberProfile($memberProfile);
             if($foundMemberProfile){
                 $this->EntityManager->remove($foundMemberProfile);
+                $this->EntityManager->flush();
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public function addGroup(Group $group)
+    {
+        $group->setId(null);
+        $group->setIsActive(1);
+        $group->setIsDeleted(0);
+        $group->setCreatedDate(new \DateTime('now'));
+        $group->setUpdatedDate(new \DateTime('now'));
+        $this->EntityManager->persist($group);
+        $this->EntityManager->flush();
+        if($group->getId()){
+            return $group;
+        }else{
+            return null;
+        }
+    }
+
+    public function getGroup(Group $group)
+    {
+        if($group->getId()){
+            $foundGroup = $this->EntityManager->getRepository(Group::class)->find($group->getId());
+            return $foundGroup;
+        }else{
+            return null;
+        }
+    }
+
+    public function getAllGroup()
+    {
+        $foundGroups = [];
+        $allfoundGroups = $this->EntityManager->getRepository(MemberProfile::class)->findAll();
+        foreach ($allfoundGroups as $group){
+            /**
+             * @var Group $group
+             */
+            if(!$group->getisDeleted()){
+                $foundMemberProfile[] = $group->getArray();
+            }
+        }
+        return $foundGroups;
+    }
+
+    public function updateGroup(Group $group)
+    {
+        try{
+            if($group->getId()){
+                $this->EntityManager->persist($group);
+                $this->EntityManager->flush();
+                if($group->getId()){
+                    return $group;
+                }
+            }
+            return null;
+        }catch (\Exception $exception){
+            print_r($exception);
+            return null;
+        }
+    }
+
+    public function removeGroup(Group $group)
+    {
+        if($group){
+            /**
+             * @var Group $foundGroup
+             */
+            $foundGroup = $this->getGroup($group);
+            if($foundGroup){
+                $this->EntityManager->remove($foundGroup);
                 $this->EntityManager->flush();
                 return true;
             }else{
