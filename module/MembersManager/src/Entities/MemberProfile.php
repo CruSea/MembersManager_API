@@ -22,25 +22,33 @@ class MemberProfile extends BaseTable
     protected $id;
 
     /**
-     * @ORM\Column(name="first_Name", type="string", unique=true, nullable=false)
+     * @ORM\Column(name="first_Name", type="string", unique=false, nullable=false)
      */
     protected $firstName;
     /**
-     * @ORM\Column(name="middle_name", type="string", unique=true, nullable=false)
+     * @ORM\Column(name="middle_name", type="string", unique=false, nullable=true)
      */
     protected $middleName;
 
     /**
-     * @ORM\Column(name="last_Name", type="string", unique=true, nullable=false)
+     * @ORM\Column(name="last_Name", type="string", unique=false, nullable=true)
      */
     protected $lastName;
+    /**
+     * @ORM\Column(name="phone", type="string", unique=false, nullable=true)
+     */
+    protected $phone;
+    /**
+     * @ORM\Column(name="email", type="string", unique=false, nullable=true)
+     */
+    protected $email;
 
     /**
-     * @ORM\Column(name="age", type="integer", unique=true, nullable=false)
+     * @ORM\Column(name="age", type="integer", unique=false, nullable=true)
      */
     protected $age;
     /**
-     * @ORM\Column(name="sex", type="string", unique=true, nullable=false)
+     * @ORM\Column(name="sex", type="string", unique=false, nullable=true)
      */
     protected $sex;
 
@@ -111,6 +119,38 @@ class MemberProfile extends BaseTable
     /**
      * @return mixed
      */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @param mixed $phone
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getAge()
     {
         return $this->age;
@@ -140,12 +180,14 @@ class MemberProfile extends BaseTable
         $this->sex = $sex;
     }
 
-
     public function getArray(){
         return array(
             'id'=>$this->getId(),
-            'firstName'=>$this->getFirstName(),
-            'lastName'=>$this->getLastName(),
+            'first_name'=>$this->getFirstName(),
+            'middle_name'=>$this->getMiddleName(),
+            'last_name'=>$this->getLastName(),
+            'phone'=>$this->getPhone(),
+            'email'=>$this->getEmail(),
             'age'=>$this->getAge(),
             'sex'=>$this->getSex(),
             'is_deleted'=>$this->getIsDeleted(),

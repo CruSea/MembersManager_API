@@ -21,9 +21,9 @@ $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/module/Me
 // database configuration parameters
 $conn = array(
 
-    'dbname' => 'ims',
-    'user' => 'root',
-    'password' => 'root',
+    'dbname' => 'MembersManagement',
+    'user' => 'bengeos',
+    'password' => 'passben',
     'host' => 'localhost:8889',
     'driver' => 'pdo_mysql',
     'charset' => 'utf8',
