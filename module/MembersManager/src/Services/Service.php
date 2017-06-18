@@ -363,6 +363,7 @@ class Service implements ServieMethods
             return null;
         }
     }
+
     public function getAllMembersContact()
     {
         $foundMemberContact = [];
@@ -377,6 +378,7 @@ class Service implements ServieMethods
         }
         return $foundMemberContact;
     }
+
     public function getMembersContact(MemberContact $memberContact)
     {
         if($memberContact->getId()){
@@ -386,6 +388,7 @@ class Service implements ServieMethods
             return null;
         }
     }
+
     public function updateMemberContact(MemberContact $memberContact)
     {
         try{
@@ -438,6 +441,7 @@ class Service implements ServieMethods
             return null;
         }
     }
+
     public function getAllMembersPlege()
     {
         $foundMemberAddress = [];
@@ -452,6 +456,7 @@ class Service implements ServieMethods
         }
         return $foundMemberAddress;
     }
+
     public function getMembersPlege(MembersPlege $membersPlege)
     {
         if($membersPlege->getId()){
@@ -461,6 +466,7 @@ class Service implements ServieMethods
             return null;
         }
     }
+
     public function removeMemberPlege(MembersPlege $membersPlege)
     {
         if($membersPlege){
@@ -478,6 +484,7 @@ class Service implements ServieMethods
         }
         return false;
     }
+
     public function updateMemberPlege(MembersPlege $membersPlege)
     {
         try{

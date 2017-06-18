@@ -14,9 +14,9 @@
 $dbParams = array(
     'hostname' => '127.0.0.1',
     'port' => 8889,
-    'username' => 'bengeos',
-    'password' => 'passben',
-    'database' => 'MembersManagement'
+    'username' => 'root',
+    'password' => 'root',
+    'database' => 'ims'
 );
 return array(
     'doctrine' => array(
