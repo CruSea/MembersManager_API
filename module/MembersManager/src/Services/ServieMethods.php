@@ -13,6 +13,10 @@ use MembersManager\Entities\Group;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
 use MembersManager\Entities\User;
+use MembersManager\Entities\MembersPlege;
+use MembersManager\Entities\MemberAddress;
+use MembersManager\Entities\MemberContact;
+
 
 interface ServieMethods
 {
@@ -58,4 +62,38 @@ interface ServieMethods
     public function getAllGroup();
     public function updateGroup(Group $group);
     public function removeGroup(Group $group);
+
+    /**
+     * Member Profiles
+     * @return mixed
+     */
+    public function addMembersPlege(MembersPlege $membersPlege);
+    public function getMembersPlege(MembersPlege $membersPlege);
+    public function getAllMembersPlege();
+    public function updateMemberPlege(MembersPlege $membersPlege);
+    public function removeMemberPlege(MembersPlege $membersPlege);
+
+
+    /**
+     * Member Address
+     * @return mixed
+     */
+    public function addMembersAddress(MemberAddress $membersAddress);
+    public function getMembersAddress(MemberAddress $membersAddress);
+    public function getAllMembersAddress();
+    public function updateMembersAddress(MemberAddress $membersAddress);
+    public function removeMembersAddress(MemberAddress $membersAddress);
+
+
+
+    /**
+     * Member Contact
+     * @return mixed
+     */
+    public function addMembersContact(MemberContact $memberContact);
+    public function getMembersContact(MemberContact $memberContact);
+    public function getAllMembersContact();
+    public function updateMemberContact(MemberContact $memberContact);
+    public function remveMemberContact(MemberContact $memberContact);
+
 }

@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="memberContact")
  */
-class memberContact extends BaseTable
+class MemberContact extends BaseTable
 {
 
     /**
