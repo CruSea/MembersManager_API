@@ -292,7 +292,7 @@ class Service implements ServieMethods
         $allMemberAddress = $this->EntityManager->getRepository(MemberAddress::class)->findAll();
         foreach ($allMemberAddress as $membersAddress){
             /**
-             * @var MemberProfile $memberProfile
+             * @var MemberAddress $membersAddress
              */
             if(!$membersAddress->getisDeleted()){
                 $foundMemberAddress[] = $membersAddress->getArray();
@@ -304,7 +304,7 @@ class Service implements ServieMethods
     public function getMembersAddress(MemberAddress $membersAddress)
     {
         if($membersAddress->getId()){
-            $foundMemberAddress = $this->EntityManager->getRepository(MemberProfile::class)->find($membersAddress->getId());
+            $foundMemberAddress = $this->EntityManager->getRepository(MemberAddress::class)->find($membersAddress->getId());
             return $foundMemberAddress;
         }else{
             return null;
@@ -317,7 +317,7 @@ class Service implements ServieMethods
             /**
              * @var MemberAddress $foundMemberAddress
              */
-            $foundMemberAddress = $this->getMemberProfile($membersAddress);
+            $foundMemberAddress = $this->getMembersAddress($membersAddress);
             if($foundMemberAddress){
                 $this->EntityManager->remove($foundMemberAddress);
                 $this->EntityManager->flush();
@@ -367,10 +367,10 @@ class Service implements ServieMethods
     public function getAllMembersContact()
     {
         $foundMemberContact = [];
-        $allMemberContact = $this->EntityManager->getRepository(MemberAddress::class)->findAll();
+        $allMemberContact = $this->EntityManager->getRepository(MemberContact::class)->findAll();
         foreach ($allMemberContact as $memberContact){
             /**
-             * @var MemberProfile $memberProfile
+             * @var MemberContact $memberContact
              */
             if(!$memberContact->getisDeleted()){
                 $foundMemberContact[] = $memberContact->getArray();
@@ -382,7 +382,7 @@ class Service implements ServieMethods
     public function getMembersContact(MemberContact $memberContact)
     {
         if($memberContact->getId()){
-            $foundMemberContact = $this->EntityManager->getRepository(MemberProfile::class)->find($memberContact->getId());
+            $foundMemberContact = $this->EntityManager->getRepository(MemberContact::class)->find($memberContact->getId());
             return $foundMemberContact;
         }else{
             return null;
@@ -410,9 +410,9 @@ class Service implements ServieMethods
     {
         if($memberContact){
             /**
-             * @var MemberAddress $foundMemberAddress
+             * @var MemberContact  $foundMemberContact
              */
-            $foundMemberContact = $this->getMemberProfile($memberContact);
+            $foundMemberContact = $this->getMembersContact($memberContact);
             if($foundMemberContact){
                 $this->EntityManager->remove($foundMemberContact);
                 $this->EntityManager->flush();
@@ -444,23 +444,23 @@ class Service implements ServieMethods
 
     public function getAllMembersPlege()
     {
-        $foundMemberAddress = [];
-        $allMemberAddress = $this->EntityManager->getRepository(MemberAddress::class)->findAll();
-        foreach ($allMemberAddress as $membersAddress){
+        $foundMemberPlege = [];
+        $allMemberPlege = $this->EntityManager->getRepository(MembersPlege::class)->findAll();
+        foreach ($allMemberPlege as $membersPlege){
             /**
-             * @var MemberProfile $memberProfile
+             * @var MembersPlege $membersPlege
              */
-            if(!$membersAddress->getisDeleted()){
-                $foundMemberAddress[] = $membersAddress->getArray();
+            if(!$membersPlege->getisDeleted()){
+                $foundMemberPlege[] = $membersPlege->getArray();
             }
         }
-        return $foundMemberAddress;
+        return $foundMemberPlege;
     }
 
     public function getMembersPlege(MembersPlege $membersPlege)
     {
         if($membersPlege->getId()){
-            $foundMembersPlege = $this->EntityManager->getRepository(MemberProfile::class)->find($membersPlege->getId());
+            $foundMembersPlege = $this->EntityManager->getRepository(MembersPlege::class)->find($membersPlege->getId());
             return $foundMembersPlege;
         }else{
             return null;
@@ -471,9 +471,9 @@ class Service implements ServieMethods
     {
         if($membersPlege){
             /**
-             * @var MemberAddress $foundMemberAddress
+             * @var MembersPlege $foundMemberPlege
              */
-            $foundMembersPlege = $this->getMemberProfile($$membersPlege);
+            $foundMembersPlege = $this->getMembersPlege($$membersPlege);
             if($foundMembersPlege){
                 $this->EntityManager->remove($foundMembersPlege);
                 $this->EntityManager->flush();
