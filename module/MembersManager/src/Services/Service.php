@@ -18,6 +18,7 @@ use MembersManager\Entities\MemberAddress;
 use MembersManager\Entities\MemberContact;
 use MembersManager\Entities\MembersPlege;
 use MembersManager\Entities\Privilege;
+use MembersManager\Entities\Profile;
 use MembersManager\Entities\User;
 
 class Service implements ServieMethods
@@ -815,5 +816,52 @@ class Service implements ServieMethods
         return false;
     }
 
+    public function addProfile(Profile $profile)
+    {
+        try{
+            $profile->setId(null);
+            $this->EntityManager->persist($profile);
+            $this->EntityManager->flush();
+            if($profile->getId()){
+                return $profile;
+            }else{
+                return null;
+            }
+        }catch (\Exception $exception){
+            echo $exception->getMessage();
+        }
+    }
+
+    public function getProfile(Profile $profile)
+    {
+        if($profile->getId()){
+            $foundGroupedMessage = $this->EntityManager->getRepository(Profile::class)->find($profile->getId());
+            return $foundGroupedMessage;
+        }else{
+            return null;
+        }
+    }
+
+    public function getaProfile()
+    {
+        $allProfiles = $this->EntityManager->getRepository(Profile::class)->findAll();
+        foreach ($allProfiles as $profile){
+            /**
+             * @var Profile $profile
+             */
+            return $profile->getArray();
+        }
+        return null;
+    }
+
+    public function removeProfile()
+    {
+        $allProfiles = $this->EntityManager->getRepository(Profile::class)->findAll();
+        foreach ($allProfiles as $profile){
+            $this->EntityManager->remove($profile);
+            $this->EntityManager->flush();
+        }
+        return true;
+    }
 
 }

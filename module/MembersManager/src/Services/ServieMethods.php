@@ -14,6 +14,7 @@ use MembersManager\Entities\GroupedContact;
 use MembersManager\Entities\GroupMessages;
 use MembersManager\Entities\MemberProfile;
 use MembersManager\Entities\Privilege;
+use MembersManager\Entities\Profile;
 use MembersManager\Entities\User;
 use MembersManager\Entities\MembersPlege;
 use MembersManager\Entities\MemberAddress;
@@ -120,5 +121,14 @@ interface ServieMethods
     public function getGroupMessage(GroupMessages $groupMessage);
     public function getGroupMessages();
     public function removeGroupMessage(GroupMessages $groupMessage);
+
+    /**
+     * Company Group Message Table
+     * @return mixed
+     */
+    public function addProfile(Profile $profile);
+    public function getProfile(Profile $profile);
+    public function getaProfile();
+    public function removeProfile();
 
 }
