@@ -21,10 +21,17 @@ $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/module/Me
 // database configuration parameters
 $conn = array(
 
-    'dbname' => 'MembersManagement',
+//    'dbname' => 'MembersManagement', // Local Server
+    'dbname' => 'IMSMembership_Production', // IMS Production Server
+//    'dbname' => 'IMSMembership_Staging', // IMS Staging Server
+
     'user' => 'bengeos',
     'password' => 'passben',
-    'host' => 'localhost:8889',
+
+//    'host' => 'localhost:8889', // Localserver
+    'host' => 'localhost', // IMS server
+
+
     'driver' => 'pdo_mysql',
     'charset' => 'utf8',
     'driverOptions' => array(
