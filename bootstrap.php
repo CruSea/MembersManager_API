@@ -29,7 +29,7 @@ $conn = array(
     'password' => 'passben',
 
 //    'host' => 'localhost:8889', // Localserver
-    'host' => 'localhost:3306', // IMS server
+    'host' => 'localhost', // IMS server
 
 
     'driver' => 'pdo_mysql',
