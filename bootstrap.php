@@ -22,8 +22,8 @@ $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/module/Me
 $conn = array(
 
 //    'dbname' => 'MembersManagement', // Local Server
-    'dbname' => 'IMSMembership_Production', // IMS Production Server
-//    'dbname' => 'IMSMembership_Staging', // IMS Staging Server
+//    'dbname' => 'IMSMembership_Production', // IMS Production Server
+    'dbname' => 'IMSMembership_Staging', // IMS Staging Server
 
     'user' => 'bengeos',
     'password' => 'passben',

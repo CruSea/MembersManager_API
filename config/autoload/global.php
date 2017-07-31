@@ -16,8 +16,8 @@ $dbParams = array(
 //    'hostname' => 'localhost:8889', // Localserver
 
 //    'dbname' => 'MembersManagement', // Local Server
-    'dbname' => 'IMSMembership_Production', // IMS Production Server
-//    'dbname' => 'IMSMembership_Staging', // IMS Staging Server
+//    'dbname' => 'IMSMembership_Production', // IMS Production Server
+    'dbname' => 'IMSMembership_Staging', // IMS Staging Server
 
 //    'port' => 8889, // Local Server
 //    'port' => 3306, // IMS Server
@@ -26,8 +26,8 @@ $dbParams = array(
     'password' => 'passben',
 
 //    'database' => 'MembersManagement' // Local Server
-    'database' => 'IMSMembership_Production'  // IMS Production Server
-//    'database' => 'IMSMembership_Staging'  // IMS Staging Server
+//    'database' => 'IMSMembership_Production'  // IMS Production Server
+    'database' => 'IMSMembership_Staging'  // IMS Staging Server
 );
 return array(
     'doctrine' => array(
