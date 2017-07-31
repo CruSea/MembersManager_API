@@ -20,7 +20,7 @@ $dbParams = array(
 //    'dbname' => 'IMSMembership_Staging', // IMS Staging Server
 
 //    'port' => 8889, // Local Server
-    'port' => 3306, // IMS Server
+//    'port' => 3306, // IMS Server
 
     'username' => 'bengeos',
     'password' => 'passben',
