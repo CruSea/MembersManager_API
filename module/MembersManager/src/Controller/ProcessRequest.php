@@ -103,6 +103,33 @@ class FORMAT_NEW_CONTACT extends BasicEnum {
     const CONTACT_AGE = 'age';
     const CONTACT_SEX = 'sex';
 }
+class FORMAT_CONTACT extends BasicEnum {
+    const CONTACT_FIRST_NAME = 'first_name';
+    const CONTACT_MIDDLE_NAME = 'middle_name';
+    const CONTACT_LAST_NAME = 'last_name';
+    const CONTACT_PHONE = 'phone';
+    const CONTACT_EMAIL = 'email';
+    const CONTACT_AGE = 'age';
+    const CONTACT_SEX = 'sex';
+    const CONTACT_COUNTRY = 'country';
+    const CONTACT_REGION = 'region';
+    const CONTACT_CITY = 'city';
+    const CONTACT_WEREDA = 'wereda';
+    const CONTACT_KEBELE = 'kebele';
+    const CONTACT_HOUSE_NUM = 'house_num';
+    const CONTACT_POSTAL_BOX = 'postal_box';
+    const CONTACT_SYNOD = 'synod';
+    const CONTACT_PRESBYTERY = 'presbytery';
+    const CONTACT_CONGREGATION = 'congregation';
+    const CONTACT_OTHER_CONGREGATION = 'other_congregation';
+    const CONTACT_OCCUPATION = 'occupation';
+    const CONTACT_OTHER_OCCUPATION = 'occupation';
+    const CONTACT_EDUCATIONAL_BACKGROUND = 'educational_background';
+    const CONTACT_QUALIFICATION = 'qualification';
+    const CONTACT_CONTRIBUTION_PERIOD = 'contribution_period';
+    const CONTACT_OTHER_CONTRIBUTION = 'other_contribution';
+    const CONTACT_SPECIAL_GIFT= 'special_gift';
+}
 class FORMAT_UPDATE_CONTACT extends BasicEnum {
     const CONTACT_CONTACT_ID = 'contact_id';
     const CONTACT_FIRST_NAME = 'first_name';
@@ -333,20 +360,26 @@ class ProcessRequest
                 }
             } elseif ($this->getRequestedService() == AvailableServices::ADD_NEW_CONTACT) {
                 /** Add new user */
-                if (FORMAT_NEW_CONTACT::isValidParam($this->getRequestParam())) {
+                if (FORMAT_CONTACT::isValidParam($this->getRequestParam())) {
                     /**
                      * @var User $superAdmin
                      */
                     $superAdmin = $this->getSuperAdmin();
                     if ($superAdmin) {
                         $newMemberProfile = new MemberProfile();
-                        $newMemberProfile->setFirstName($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_FIRST_NAME]);
-                        $newMemberProfile->setMiddleName($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_MIDDLE_NAME]);
-                        $newMemberProfile->setLastName($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_LAST_NAME]);
-                        $newMemberProfile->setPhone($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_PHONE]);
-                        $newMemberProfile->setEmail($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_EMAIL]);
-                        $newMemberProfile->setAge($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_AGE]);
-                        $newMemberProfile->setSex($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_SEX]);
+                        $newMemberProfile->setFirstName($this->getRequestParam()[FORMAT_CONTACT::CONTACT_FIRST_NAME] ? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_FIRST_NAME]:"");
+                        $newMemberProfile->setMiddleName($this->getRequestParam()[FORMAT_CONTACT::CONTACT_MIDDLE_NAME] ? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_MIDDLE_NAME]: "");
+                        $newMemberProfile->setLastName($this->getRequestParam()[FORMAT_CONTACT::CONTACT_LAST_NAME]? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_LAST_NAME]: "");
+                        $newMemberProfile->setPhone($this->getRequestParam()[FORMAT_CONTACT::CONTACT_PHONE]? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_PHONE]: "");
+                        $newMemberProfile->setEmail($this->getRequestParam()[FORMAT_CONTACT::CONTACT_EMAIL]? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_EMAIL]: "");
+                        $newMemberProfile->setAge($this->getRequestParam()[FORMAT_CONTACT::CONTACT_AGE]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_AGE]:"0");
+                        $newMemberProfile->setSex($this->getRequestParam()[FORMAT_CONTACT::CONTACT_SEX]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_SEX]:"Male");
+                        $newMemberProfile->setWereda($this->getRequestParam()[FORMAT_CONTACT::CONTACT_WEREDA]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_WEREDA]:"");
+                        $newMemberProfile->setHouseNumber($this->getRequestParam()[FORMAT_CONTACT::CONTACT_HOUSE_NUM]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_HOUSE_NUM]:"");
+                        $newMemberProfile->setPostalBox($this->getRequestParam()[FORMAT_CONTACT::CONTACT_POSTAL_BOX]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_POSTAL_BOX]:"");
+                        $newMemberProfile->setOtherOccupation($this->getRequestParam()[FORMAT_CONTACT::CONTACT_OTHER_OCCUPATION]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_OTHER_OCCUPATION]:"");
+                        $newMemberProfile->setOtherCongregation($this->getRequestParam()[FORMAT_CONTACT::CONTACT_OTHER_CONGREGATION]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_OTHER_CONGREGATION]:"");
+                        $newMemberProfile->setQualification($this->getRequestParam()[FORMAT_CONTACT::CONTACT_QUALIFICATION]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_QUALIFICATION]:"");
                         $newMemberProfile->setUpdatedBy($superAdmin);
                         $newMemberProfile->setCreatedBy($superAdmin);
                         $addedContact = $this->ServiceManager->addMemberProfile($newMemberProfile);
@@ -363,33 +396,41 @@ class ProcessRequest
                 }
             } elseif ($this->getRequestedService() == AvailableServices::UPDATE_CONTACT) {
                 /** Add new user */
-                if (FORMAT_UPDATE_CONTACT::isValidParam($this->getRequestParam())) {
-                    $superAdmin = $this->getSuperAdmin();
-                    if ($superAdmin) {
-                        $oldMember = new MemberProfile();
-                        $oldMember->setId($this->getRequestParam()[FORMAT_UPDATE_CONTACT::CONTACT_CONTACT_ID]);
-                        $newMemberProfile = $this->ServiceManager->getMemberProfile($oldMember);
-                        if($newMemberProfile){
-                            $newMemberProfile->setFirstName($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_FIRST_NAME]);
-                            $newMemberProfile->setMiddleName($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_MIDDLE_NAME]);
-                            $newMemberProfile->setPhone($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_PHONE]);
-                            $newMemberProfile->setEmail($this->getRequestParam()[FORMAT_NEW_CONTACT::CONTACT_EMAIL]);
-                            $newMemberProfile->setUpdatedBy($superAdmin);
-                            $addedContact = $this->ServiceManager->updateMemberProfile($newMemberProfile);
-                            if ($addedContact) {
-                                $this->Message[ResponsesType::RESPONSE] = "Contact Updated Successfully";
-                            } else {
-                                $this->Message[ResponsesType::ERROR] = "Failed to add Group";
-                            }
-                        }else{
-                            $this->Message[ResponsesType::ERROR] = "member not found";
+                $superAdmin = $this->getSuperAdmin();
+                if ($superAdmin) {
+                    $oldMember = new MemberProfile();
+                    $oldMember->setId($this->getRequestParam()[FORMAT_UPDATE_CONTACT::CONTACT_CONTACT_ID]);
+                    /**
+                     * @var MemberProfile $newMemberProfile
+                     */
+                    $newMemberProfile = $this->ServiceManager->getMemberProfile($oldMember);
+                    if($newMemberProfile){
+                        $newMemberProfile->setFirstName($this->getRequestParam()[FORMAT_CONTACT::CONTACT_FIRST_NAME] ? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_FIRST_NAME]:"");
+                        $newMemberProfile->setMiddleName($this->getRequestParam()[FORMAT_CONTACT::CONTACT_MIDDLE_NAME] ? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_MIDDLE_NAME]: "");
+                        $newMemberProfile->setLastName($this->getRequestParam()[FORMAT_CONTACT::CONTACT_LAST_NAME]? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_LAST_NAME]: "");
+                        $newMemberProfile->setPhone($this->getRequestParam()[FORMAT_CONTACT::CONTACT_PHONE]? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_PHONE]: "");
+                        $newMemberProfile->setEmail($this->getRequestParam()[FORMAT_CONTACT::CONTACT_EMAIL]? $this->getRequestParam()[FORMAT_CONTACT::CONTACT_EMAIL]: "");
+                        $newMemberProfile->setAge($this->getRequestParam()[FORMAT_CONTACT::CONTACT_AGE]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_AGE]:"0");
+                        $newMemberProfile->setSex($this->getRequestParam()[FORMAT_CONTACT::CONTACT_SEX]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_SEX]:"Male");
+                        $newMemberProfile->setWereda($this->getRequestParam()[FORMAT_CONTACT::CONTACT_WEREDA]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_WEREDA]:"");
+                        $newMemberProfile->setHouseNumber($this->getRequestParam()[FORMAT_CONTACT::CONTACT_HOUSE_NUM]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_HOUSE_NUM]:"");
+                        $newMemberProfile->setPostalBox($this->getRequestParam()[FORMAT_CONTACT::CONTACT_POSTAL_BOX]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_POSTAL_BOX]:"");
+                        $newMemberProfile->setOtherOccupation($this->getRequestParam()[FORMAT_CONTACT::CONTACT_OTHER_OCCUPATION]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_OTHER_OCCUPATION]:"");
+                        $newMemberProfile->setOtherCongregation($this->getRequestParam()[FORMAT_CONTACT::CONTACT_OTHER_CONGREGATION]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_OTHER_CONGREGATION]:"");
+                        $newMemberProfile->setQualification($this->getRequestParam()[FORMAT_CONTACT::CONTACT_QUALIFICATION]?$this->getRequestParam()[FORMAT_CONTACT::CONTACT_QUALIFICATION]:"");
+                        $newMemberProfile->setUpdatedBy($superAdmin);
+                        $addedContact = $this->ServiceManager->updateMemberProfile($newMemberProfile);
+                        if ($addedContact) {
+                            $this->Message[ResponsesType::RESPONSE] = "Contact Updated Successfully";
+                        } else {
+                            $this->Message[ResponsesType::ERROR] = "Failed to add Group";
                         }
-
-                    } else {
-                        $this->Message[ResponsesType::ERROR] = "The Super Admin could not be found now! please try again!!!";
+                    }else{
+                        $this->Message[ResponsesType::ERROR] = "member not found";
                     }
+
                 } else {
-                    $this->Message[ResponsesType::ERROR] = "Invalid Registration Param used!";
+                    $this->Message[ResponsesType::ERROR] = "The Super Admin could not be found now! please try again!!!";
                 }
             }elseif ($this->getRequestedService() == AvailableServices::ADD_NEW_GROUP_MESSAGE) {
                 /**
