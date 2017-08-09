@@ -468,9 +468,9 @@ class ProcessRequest
                                             );
                                         $sendData = array(
 //                                            "user_name"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::CAMPAIGN_NAME],
-                                            "user_name"=>"george",
+                                            "user_name"=>"ims",
 //                                            "user_pass"=>$this->getRequestParam()[FORMAT_GROUP_MESSAGE::CAMPAIGN_NAME],
-                                            "user_pass"=>"passben",
+                                            "user_pass"=>"passims123",
                                             "service"=>"add_new_send_message",
                                             "param"=>json_encode($newSendMessage),
                                         );
